@@ -55,13 +55,18 @@ namespace ShimmerAPI
             {
                 PCsvFile.Write(data[i].ToString() + Delimeter);
             }
-            PCsvFile.WriteLine();
-
+            
             if (bWriteMarkerNext > 0)
-            { 
-                PCsvFile.Write("MRK"+bWriteMarkerNext + "\n");
+            {
+                PCsvFile.Write("MRK" + bWriteMarkerNext + Delimeter);
                 bWriteMarkerNext = 0;
             }
+            else
+            {
+                PCsvFile.Write(Delimeter);
+            }
+
+            PCsvFile.WriteLine();
 
 
             bRowInProgress = false;

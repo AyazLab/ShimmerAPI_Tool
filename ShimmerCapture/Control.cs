@@ -178,19 +178,9 @@ namespace ShimmerAPI
             AppDomain.CurrentDomain.UnhandledException += new ExceptionEventHandler().CurrentDomainUnhandledException;
         }
 
-      
 
-        private void udpReceived_EventHandler(object sender, EventArgs e)
-        {
-            
-            this.button1.BeginInvoke(new Action(
-                    () =>
-                    {
-                // Put your "work" here, and it will happen on the UI thread...
-            }));
 
-        }
-       
+
         private void ControlForm_Load(object sender, EventArgs e)
         {
             buttonSetBlinkLED.Visible = false;
@@ -218,7 +208,7 @@ namespace ShimmerAPI
             comboBoxComPorts.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBoxComPorts.AutoCompleteSource = AutoCompleteSource.ListItems;
 
-            
+
 
             this.Resize += new System.EventHandler(this.FormResize);
 
@@ -233,30 +223,30 @@ namespace ShimmerAPI
                 //ZedGraphControl3.Size = new System.Drawing.Size(this.Size.Width - 1000, ZedGraphControl3.Size.Height);
             }
 
-            CheckBoxArrayGroup1 = new CheckBox[30] { checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, 
-            checkBox7, checkBox8, checkBox9, checkBox10, checkBox11, checkBox12, checkBox13, checkBox14, 
-            checkBox15, checkBox16, checkBox17, checkBox18, checkBox19, checkBox20, checkBox21, 
-            checkBox22, checkBox23, checkBox24, checkBox25, checkBox26, checkBox27, checkBox28, 
+            CheckBoxArrayGroup1 = new CheckBox[30] { checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6,
+            checkBox7, checkBox8, checkBox9, checkBox10, checkBox11, checkBox12, checkBox13, checkBox14,
+            checkBox15, checkBox16, checkBox17, checkBox18, checkBox19, checkBox20, checkBox21,
+            checkBox22, checkBox23, checkBox24, checkBox25, checkBox26, checkBox27, checkBox28,
             checkBox29, checkBox30};
             foreach (var checkBox in CheckBoxArrayGroup1)
             {
                 checkBox.CheckedChanged += new EventHandler(CheckBoxArrayGroup1_CheckedChanged);
             }
 
-            CheckBoxArrayGroup2 = new CheckBox[30] { checkBox31, checkBox32, checkBox33, checkBox34, checkBox35, checkBox36, 
-            checkBox37, checkBox38, checkBox39, checkBox40, checkBox41, checkBox42, checkBox43, checkBox44, 
-            checkBox45, checkBox46, checkBox47, checkBox48, checkBox49, checkBox50, checkBox51, 
-            checkBox52, checkBox53, checkBox54, checkBox55, checkBox56, checkBox57, checkBox58, 
+            CheckBoxArrayGroup2 = new CheckBox[30] { checkBox31, checkBox32, checkBox33, checkBox34, checkBox35, checkBox36,
+            checkBox37, checkBox38, checkBox39, checkBox40, checkBox41, checkBox42, checkBox43, checkBox44,
+            checkBox45, checkBox46, checkBox47, checkBox48, checkBox49, checkBox50, checkBox51,
+            checkBox52, checkBox53, checkBox54, checkBox55, checkBox56, checkBox57, checkBox58,
             checkBox59, checkBox60};
             foreach (var checkBox in CheckBoxArrayGroup2)
             {
                 checkBox.CheckedChanged += new EventHandler(CheckBoxArrayGroup2_CheckedChanged);
             }
 
-            CheckBoxArrayGroup3 = new CheckBox[30] { checkBox61, checkBox62, checkBox63, checkBox64, checkBox65, checkBox66, 
-            checkBox67, checkBox68, checkBox69, checkBox70, checkBox71, checkBox72, checkBox73, checkBox74, 
-            checkBox75, checkBox76, checkBox77, checkBox78, checkBox79, checkBox80, checkBox81, 
-            checkBox82, checkBox83, checkBox84, checkBox85, checkBox86, checkBox87, checkBox88, 
+            CheckBoxArrayGroup3 = new CheckBox[30] { checkBox61, checkBox62, checkBox63, checkBox64, checkBox65, checkBox66,
+            checkBox67, checkBox68, checkBox69, checkBox70, checkBox71, checkBox72, checkBox73, checkBox74,
+            checkBox75, checkBox76, checkBox77, checkBox78, checkBox79, checkBox80, checkBox81,
+            checkBox82, checkBox83, checkBox84, checkBox85, checkBox86, checkBox87, checkBox88,
             checkBox89, checkBox90};
             foreach (var checkBox in CheckBoxArrayGroup3)
             {
@@ -273,9 +263,7 @@ namespace ShimmerAPI
             
         }
 
-        
-
-        public void ChangeStatusLabel(string text)
+            public void ChangeStatusLabel(string text)
         {
             if (InvokeRequired)
             {
@@ -1403,7 +1391,11 @@ namespace ShimmerAPI
             ShimmerDevice.StartStreamingandLog();
 
             udpListener = new UDPListener(udpPortNo);
-            udpListener.SetWriteToFile(WriteToFile);
+            udpListener.NewMessageReceived += delegate (object o, MyMessageArgs msgData)
+            {
+                string s = o.ToString() + " " + msgData.data.ToString();
+                WriteToFile.WriteMarker(msgData.data[0]);
+            };
             udpListener.StartListener(udpMsgLen);
         }
 
@@ -2849,6 +2841,7 @@ namespace ShimmerAPI
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+
             //MessageBox.Show("Timer ticked");
             SendKeys.Send("{F8}");
             WriteToFile.WriteMarker(8);
@@ -2858,6 +2851,8 @@ namespace ShimmerAPI
         {
 
         }
+
+      
     }
 
 
