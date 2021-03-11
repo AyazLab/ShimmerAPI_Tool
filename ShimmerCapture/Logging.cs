@@ -30,6 +30,7 @@ namespace ShimmerAPI
 
         volatile bool bRowInProgress = false;
         volatile int bWriteMarkerNext = 0;
+        public long mrkReceivedTime = 0;
 
         public void WriteMarker(int inp)
         {
@@ -50,6 +51,8 @@ namespace ShimmerAPI
             Double[] data = obj.GetData().ToArray();
 
             PCsvFile.Write(System.DateTime.Now.Hour + ":"+ System.DateTime.Now.Minute+ Delimeter + System.DateTime.Now.Second+"."+System.DateTime.Now.Millisecond + Delimeter);
+
+            PCsvFile.Write(obj.elapsedTimer.ToString()+ Delimeter);
 
             for (int i = 0; i < data.Length; i++)
             {

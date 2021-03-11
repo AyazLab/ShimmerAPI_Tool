@@ -205,6 +205,8 @@ namespace ShimmerAPI
         public bool IsFilled = false;
         public System.Timers.Timer TimerConnect = null; // From System.Timers
 
+        public Stopwatch stopwatch= null;
+
         protected bool SetupDevice = false;
         protected int SetEnabledSensors = (int)SensorBitmapShimmer2.SENSOR_ACCEL;
         protected int ChipID;
@@ -820,11 +822,16 @@ namespace ShimmerAPI
             FlushInputConnection();
             KeepObjectCluster = null;
 
+
+
             while (!StopReading)
             {
                 try
                 {
                     byte b = (byte)ReadByte();
+
+                    long timeElapsed = stopwatch.ElapsedMilliseconds;
+
                     if (ShimmerState == SHIMMER_STATE_STREAMING)
                     {
                         
@@ -843,6 +850,8 @@ namespace ShimmerAPI
                                     }
 
                                     objectCluster = BuildMsg(dataByte);
+
+                                    objectCluster.ElapsedTimer = timeElapsed;
 
                                     if (KeepObjectCluster != null)
                                     {

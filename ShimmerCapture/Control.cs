@@ -256,14 +256,20 @@ namespace ShimmerAPI
             InitializeGraphs();
             initializeExGLeadOff();
 
-            comboBoxComPorts.SelectedText = "COM6";
+
+            comboBoxComPorts.SelectedText = Properties.Settings.Default.COMport;
+            textBoxSubj.Text = Properties.Settings.Default.Subject;
+            textBox_udpPort.Text = Properties.Settings.Default.UDPport;
+
+            int.TryParse(textBox_udpPort.Text, out udpPortNo);
 
             udpListener = new UDPListener(udpPortNo);
 
             
         }
 
-            public void ChangeStatusLabel(string text)
+      
+        public void ChangeStatusLabel(string text)
         {
             if (InvokeRequired)
             {
@@ -1388,6 +1394,12 @@ namespace ShimmerAPI
 
             CountXAxisDataPoints = 0;
             CountXAxisDataPoints++;
+
+            Properties.Settings.Default.UDPport = udpPortNo.ToString();
+            Properties.Settings.Default.COMport = comboBoxComPorts.SelectedText;
+            Properties.Settings.Default.Subject = textBoxSubj.Text;
+            Properties.Settings.Default.Save();
+
             ShimmerDevice.StartStreamingandLog();
 
             udpListener = new UDPListener(udpPortNo);
@@ -1721,6 +1733,8 @@ namespace ShimmerAPI
                     List<String> formats = objectCluster.GetFormats();
                     List<String> units = objectCluster.GetUnits();
                     List<Double> data = objectCluster.GetData();
+
+
 
                     //if (EnablePPGtoHRConversion)
                     //{
@@ -2852,7 +2866,17 @@ namespace ShimmerAPI
 
         }
 
-      
+        private void textBox_udpPort_TextChanged(object sender, EventArgs e)
+        {
+            uint outPort;
+            uint.TryParse(textBox_udpPort.Text,out outPort);
+            if (outPort > 80 && outPort < 65500)
+                udpPortNo = (int)outPort;
+            else
+            {
+                textBox_udpPort.Text = outPort.ToString();
+            }
+        }
     }
 
 

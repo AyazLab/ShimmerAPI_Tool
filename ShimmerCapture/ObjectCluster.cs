@@ -15,6 +15,8 @@ namespace ShimmerAPI
         private readonly List<String> Units = new List<String>();
         private readonly List<Double> Data = new List<Double>();
 
+        public long elapsedTimer;
+
         public ObjectCluster(String comPort, String shimmerId)
         {
             COMPort = comPort;
@@ -52,6 +54,8 @@ namespace ShimmerAPI
             Units = new List<String>();
             COMPort = obj.GetCOMPort();
             ShimmerID = obj.GetShimmerID();
+
+            elapsedTimer = obj.elapsedTimer;
             for (int count = 0; count < data.Length; count++)
             {
                 Data.Add(obj.GetData()[count]);

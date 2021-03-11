@@ -375,6 +375,8 @@ namespace ShimmerAPI
 
         }
 
+        
+
         public override void StartStreamingandLog()
         {
             KeepObjectCluster = null;
@@ -384,6 +386,7 @@ namespace ShimmerAPI
                 {
                     if (IsFilled)
                     {
+                        
                         StreamingACKReceived = false;
                         LastReceivedTimeStamp = 0;
                         CurrentTimeStampCycle = 0;
@@ -410,6 +413,8 @@ namespace ShimmerAPI
                         {
                             isLogging = true;
                         }
+
+                        stopwatch.Start();
 
                         // btsd changes 2
                         if (GetFirmwareIdentifier() == 3)

@@ -169,7 +169,8 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBoxSubj = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.button_mrk = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox_udpPort = new System.Windows.Forms.TextBox();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -580,7 +581,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(2497, 40);
+            this.toolStrip1.Size = new System.Drawing.Size(2557, 40);
             this.toolStrip1.TabIndex = 38;
             this.toolStrip1.Text = "Check For Updates";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
@@ -600,7 +601,7 @@
             this.ToolStripMenuItemQuit.Name = "ToolStripMenuItemQuit";
             this.ToolStripMenuItemQuit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.ToolStripMenuItemQuit.ShowShortcutKeys = false;
-            this.ToolStripMenuItemQuit.Size = new System.Drawing.Size(158, 40);
+            this.ToolStripMenuItemQuit.Size = new System.Drawing.Size(315, 40);
             this.ToolStripMenuItemQuit.Text = "Quit";
             this.ToolStripMenuItemQuit.Click += new System.EventHandler(this.ToolStripMenuItemQuit_Click);
             // 
@@ -1514,7 +1515,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 1942);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 26, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(2497, 39);
+            this.statusStrip1.Size = new System.Drawing.Size(2557, 39);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -1741,24 +1742,34 @@
             this.label3.TabIndex = 152;
             this.label3.Text = "Subj";
             // 
-            // button_mrk
+            // label4
             // 
-            this.button_mrk.Location = new System.Drawing.Point(1507, 18);
-            this.button_mrk.Margin = new System.Windows.Forms.Padding(6);
-            this.button_mrk.Name = "button_mrk";
-            this.button_mrk.Size = new System.Drawing.Size(227, 42);
-            this.button_mrk.TabIndex = 153;
-            this.button_mrk.Text = "Set Mrk";
-            this.button_mrk.UseVisualStyleBackColor = true;
-         
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1454, 20);
+            this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(93, 25);
+            this.label4.TabIndex = 154;
+            this.label4.Text = "UDP Port";
+            // 
+            // textBox_udpPort
+            // 
+            this.textBox_udpPort.Location = new System.Drawing.Point(1563, 20);
+            this.textBox_udpPort.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox_udpPort.Name = "textBox_udpPort";
+            this.textBox_udpPort.Size = new System.Drawing.Size(171, 29);
+            this.textBox_udpPort.TabIndex = 153;
+            this.textBox_udpPort.Text = "5501";
+            this.textBox_udpPort.TextChanged += new System.EventHandler(this.textBox_udpPort_TextChanged);
             // 
             // Control
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(2527, 1257);
-            this.Controls.Add(this.button_mrk);
+            this.ClientSize = new System.Drawing.Size(2587, 1257);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.textBox_udpPort);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBoxSubj);
             this.Controls.Add(this.button1);
@@ -2039,7 +2050,8 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TextBox textBoxSubj;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button_mrk;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBox_udpPort;
     }
 }
 
