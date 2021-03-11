@@ -156,6 +156,11 @@ namespace ShimmerAPI
         Color.MediumBlue};
         int count = 0;
 
+        private UDPListener udpListener;
+        private int udpPortNo=5501;
+        private int udpMsgLen = 1;
+        // private string udpIPaddr = "0.0.0.0";
+
         public static bool usingLinux
         {
             get
@@ -173,6 +178,19 @@ namespace ShimmerAPI
             AppDomain.CurrentDomain.UnhandledException += new ExceptionEventHandler().CurrentDomainUnhandledException;
         }
 
+      
+
+        private void udpReceived_EventHandler(object sender, EventArgs e)
+        {
+            
+            this.button1.BeginInvoke(new Action(
+                    () =>
+                    {
+                // Put your "work" here, and it will happen on the UI thread...
+            }));
+
+        }
+       
         private void ControlForm_Load(object sender, EventArgs e)
         {
             buttonSetBlinkLED.Visible = false;
@@ -249,7 +267,13 @@ namespace ShimmerAPI
             initializeExGLeadOff();
 
             comboBoxComPorts.SelectedText = "COM6";
+
+            udpListener = new UDPListener(udpPortNo);
+
+            
         }
+
+        
 
         public void ChangeStatusLabel(string text)
         {
@@ -602,6 +626,7 @@ namespace ShimmerAPI
                     else
                     {
                         ShimmerDevice.StopStreaming();
+                        udpListener.StopListener();
                     }
                 }
                 ShimmerDevice.Disconnect();
@@ -1264,6 +1289,7 @@ namespace ShimmerAPI
                     else
                     {
                         ShimmerDevice.StopStreaming();
+                        udpListener.StopListener();
                     }
                 }
                 ShimmerDevice.Disconnect();
@@ -1344,7 +1370,12 @@ namespace ShimmerAPI
             labelPRR.Visible = true;
             buttonStart_Click1();
 
-            string filename = @"C:\Users\jlw437\Documents\GSR\" + textBoxSubj.Text + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString("00") + DateTime.Now.Day.ToString("00") + "_" + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var subFolderPath = Path.Combine(path, "/GSR/");
+
+            string filename = subFolderPath + textBoxSubj.Text + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString("00") + DateTime.Now.Day.ToString("00") + "_" + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
+
+
             WriteToFile = new Logging(filename, ",");
             ToolStripMenuItemSaveToCSV.Checked = true;
 
@@ -1370,6 +1401,10 @@ namespace ShimmerAPI
             CountXAxisDataPoints = 0;
             CountXAxisDataPoints++;
             ShimmerDevice.StartStreamingandLog();
+
+            udpListener = new UDPListener(udpPortNo);
+            udpListener.SetWriteToFile(WriteToFile);
+            udpListener.StartListener(udpMsgLen);
         }
 
 
@@ -1378,6 +1413,7 @@ namespace ShimmerAPI
             RemoveAllTextBox();
             labelPRR.Visible = false;
             ShimmerDevice.StopStreaming();
+            udpListener.StopListener();
             buttonStop_Click1();
 
             SendKeys.Send("{F9}");
@@ -2728,6 +2764,9 @@ namespace ShimmerAPI
             CountXAxisDataPoints = 0;
             CountXAxisDataPoints++;
             ShimmerDevice.StartStreaming();
+
+            udpListener = new UDPListener(udpPortNo);
+            udpListener.StartListener(udpMsgLen);
 
         }
 
