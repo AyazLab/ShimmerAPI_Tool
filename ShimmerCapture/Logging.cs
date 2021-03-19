@@ -50,7 +50,7 @@ namespace ShimmerAPI
             }
             Double[] data = obj.GetData().ToArray();
 
-            PCsvFile.Write(System.DateTime.Now.Hour + ":"+ System.DateTime.Now.Minute+ Delimeter + System.DateTime.Now.Second+"."+System.DateTime.Now.Millisecond + Delimeter);
+            PCsvFile.Write(System.DateTime.Now.Hour + ":"+ System.DateTime.Now.Minute+ "." + System.DateTime.Now.Second+"."+System.DateTime.Now.Millisecond + Delimeter);
 
             PCsvFile.Write(obj.elapsedTimer.ToString()+ Delimeter);
 

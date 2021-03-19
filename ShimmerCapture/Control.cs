@@ -14,7 +14,7 @@ using ShimmerAPI;
 using ShimmerLibrary;
 //using ExceptionReporting;   // For ExceptionReporting
 
-/*
+/*d
  * Changes since 0.1.15
  * - Method for ExG lead off dectection by decoding ExG status bytes
  * - UI TextBoxes and Labels for ExG lead off detection

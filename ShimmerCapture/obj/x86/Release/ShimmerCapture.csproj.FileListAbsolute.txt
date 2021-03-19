@@ -124,3 +124,35 @@ D:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.app
 D:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture.csproj.CopyComplete
 D:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.exe
 D:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.pdb
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture.csprojAssemblyReference.cache
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.FormAbout.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.FormUpdateCheck.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.FormUpdateInstall.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.Orientation3D.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.Control.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.Configuration.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.Properties.Resources.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.UserControlExgConfig.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.UserControlGeneralConfig.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerAPI.UserControlSdConfig.resources
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture.csproj.GenerateResource.cache
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture.csproj.CoreCompileInputs.cache
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.exe
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.pdb
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ShimmerCapture v0.6.exe.config
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ShimmerCapture v0.6.exe.manifest
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ShimmerCapture v0.6.application
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ShimmerCapture v0.6.exe
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ShimmerCapture v0.6.pdb
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ExceptionReporter.WinForms.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\InTheHand.Net.Personal.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\MathNet.Numerics.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\OpenTK.Compatibility.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\OpenTK.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\OpenTK.GLControl.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ShimmerClosedLibraryRev0_4.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\ZedGraph.dll
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\bin\Release\InTheHand.Net.Personal.xml
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.exe.manifest
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture v0.6.application
+F:\Github\ShimmerAPI_Tool\ShimmerCapture\obj\x86\Release\ShimmerCapture.csproj.CopyComplete

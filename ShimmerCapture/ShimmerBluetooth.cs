@@ -851,7 +851,7 @@ namespace ShimmerAPI
 
                                     objectCluster = BuildMsg(dataByte);
 
-                                    objectCluster.ElapsedTimer = timeElapsed;
+                                    objectCluster.elapsedTimer = timeElapsed;
 
                                     if (KeepObjectCluster != null)
                                     {
