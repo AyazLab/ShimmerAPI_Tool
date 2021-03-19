@@ -1,4 +1,5 @@
-
+ShimmerCapture/obj/*
+.vs/*
 *.pdb
 *.manifest
 *.cache
