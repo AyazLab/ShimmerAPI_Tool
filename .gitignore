@@ -1,6 +1,15 @@
 ShimmerCapture_source/obj/*
+stable/app.publish/*
 .vs/*
 *.pdb
 *.manifest
 *.cache
 *.application
+ShimmerCapture_source/bin/Debug/ShimmerCapture v0.6.exe
+ShimmerCapture_source/bin/Debug/ShimmerCapture v0.6.exe.config
+ShimmerCapture_source/bin/Debug/app.publish/ShimmerCapture v0.6.exe
+ShimmerCapture_source/bin/Release/app.publish/ShimmerCapture v0.6.exe
+ShimmerCapture_source/bin/Release/ShimmerCapture v0.6.exe.config
+ShimmerCapture_source/..l/stable/app.publish/ShimmerCapture v0.6.exe
+stable/app.publish/ShimmerCapture v0.6.exe
+stable/ShimmerCapture v0.6.exe.config
