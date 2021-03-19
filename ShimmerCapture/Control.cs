@@ -183,6 +183,7 @@ namespace ShimmerAPI
 
         private void ControlForm_Load(object sender, EventArgs e)
         {
+
             buttonSetBlinkLED.Visible = false;
             checkBoxTSACheck.Visible = false;
             buttonStreamandLog.Visible = false;
@@ -1360,12 +1361,19 @@ namespace ShimmerAPI
         private void buttonStart_Click(object sender, EventArgs e)
         {
             
+
             FirstTime = true;
             labelPRR.Visible = true;
             buttonStart_Click1();
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var subFolderPath = Path.Combine(path, "/GSR/");
+            var subFolderPath = Path.Combine(path, "Shimmer_GSR\\");
+
+            //Create GSR directory in MyDocuments if it doesn't exist already
+            if (!Directory.Exists(subFolderPath))
+            {
+                Directory.CreateDirectory(subFolderPath);
+            }
 
             string filename = subFolderPath + textBoxSubj.Text + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString("00") + DateTime.Now.Day.ToString("00") + "_" + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
 
