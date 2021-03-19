@@ -1,4 +1,4 @@
-ShimmerCapture/obj/*
+ShimmerCapture_source/obj/*
 .vs/*
 *.pdb
 *.manifest
