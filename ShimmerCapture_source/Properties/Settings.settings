@@ -11,5 +11,8 @@
     <Setting Name="Subject" Type="System.String" Scope="User">
       <Value Profile="(Default)">TestSubject</Value>
     </Setting>
+    <Setting Name="UDPenabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -183,10 +183,11 @@ namespace ShimmerAPI
 
         private void ControlForm_Load(object sender, EventArgs e)
         {
-
-            buttonSetBlinkLED.Visible = false;
+           
+            //buttonSetBlinkLED.Visible = false;
             checkBoxTSACheck.Visible = false;
-            buttonStreamandLog.Visible = false;
+            buttonStreamandLog.Visible = true;
+            buttonStreamandLog.Enabled = false;
             buttonReadDirectory.Visible = false;
             button1.Visible = false;
             labelPRR.Visible = false;
@@ -196,6 +197,9 @@ namespace ShimmerAPI
             }
             this.Text = ApplicationName + " v" + versionNumber;
             tsStatusLabel.Text = "";
+
+
+            buttonReload_Click(sender, null);
             ComPort = comboBoxComPorts.Text;
             // btsd changes1
             ShimmerDevice = new ShimmerSDBT("Shimmer", ComPort);
@@ -261,12 +265,12 @@ namespace ShimmerAPI
             comboBoxComPorts.SelectedText = Properties.Settings.Default.COMport;
             textBoxSubj.Text = Properties.Settings.Default.Subject;
             textBox_udpPort.Text = Properties.Settings.Default.UDPport;
+            checkBox91.Checked=Properties.Settings.Default.UDPenabled;
 
             int.TryParse(textBox_udpPort.Text, out udpPortNo);
 
             udpListener = new UDPListener(udpPortNo);
 
-            
         }
 
       
@@ -1237,10 +1241,36 @@ namespace ShimmerAPI
             }
         }
 
+        bool isConnected = false;
         private void buttonConnect_Click(object sender, EventArgs e)
         {
             RemoveAllTextBox();
-            Connect();
+            if (!isConnected)
+            {
+                Connect();
+            }
+            else
+            {
+                Stop();
+                Disconnect();
+            }
+        }
+
+        private void SetConnectDisconnect(bool connected)
+        {
+            isConnected = connected;
+            if(connected)
+            {
+                buttonConnect.Text = "Disconnect";
+                comboBoxComPorts.Enabled = false;
+                buttonReload.Enabled = false;
+            }
+            else
+            {
+                buttonConnect.Text = "Connect";
+                comboBoxComPorts.Enabled = true;
+                buttonReload.Enabled = false;
+            }
         }
 
         public void Connect()
@@ -1264,8 +1294,14 @@ namespace ShimmerAPI
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
+            
+            Stop();
+            Disconnect();
             RemoveAllTextBox();
+        }
 
+        public void Disconnect()
+        {
             if (WriteToFile != null)
             {
                 WriteToFile.CloseFile();
@@ -1360,7 +1396,7 @@ namespace ShimmerAPI
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            
+            textBoxSubj.Enabled = false;
 
             FirstTime = true;
             labelPRR.Visible = true;
@@ -1380,6 +1416,9 @@ namespace ShimmerAPI
 
             WriteToFile = new Logging(filename, ",");
             ToolStripMenuItemSaveToCSV.Checked = true;
+
+            checkBox91.Enabled = false;
+            textBox_udpPort.Enabled = false;
 
             timer1.Start();  // timer added from toolbox
             SendKeys.Send("{F7}");
@@ -1406,24 +1445,36 @@ namespace ShimmerAPI
             Properties.Settings.Default.UDPport = udpPortNo.ToString();
             Properties.Settings.Default.COMport = comboBoxComPorts.SelectedText;
             Properties.Settings.Default.Subject = textBoxSubj.Text;
+            Properties.Settings.Default.UDPenabled = checkBox91.Checked;
             Properties.Settings.Default.Save();
 
             ShimmerDevice.StartStreamingandLog();
 
-            udpListener = new UDPListener(udpPortNo);
-            udpListener.NewMessageReceived += delegate (object o, MyMessageArgs msgData)
-            {
-                string s = o.ToString() + " " + msgData.data.ToString();
-                WriteToFile.WriteMarker(msgData.data[0]);
-            };
-            udpListener.StartListener(udpMsgLen);
+            if (udpMarkersEnabled)
+            { 
+                udpListener = new UDPListener(udpPortNo);
+                udpListener.NewMessageReceived += delegate (object o, MyMessageArgs msgData)
+                {
+                    string s = o.ToString() + " " + msgData.data.ToString();
+                    WriteToFile.WriteMarker(msgData.data[0]);
+                };
+            
+                udpListener.StartListener(udpMsgLen);
+            }
         }
 
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
             RemoveAllTextBox();
+            Stop();
+        }
+
+        private void Stop()
+        {
             labelPRR.Visible = false;
+            checkBox91.Enabled = true;
+            textBox_udpPort.Enabled = true;
             ShimmerDevice.StopStreaming();
             udpListener.StopListener();
             buttonStop_Click1();
@@ -1431,9 +1482,9 @@ namespace ShimmerAPI
             SendKeys.Send("{F9}");
             WriteToFile.WriteMarker(9);
             timer1.Stop();
+            textBoxSubj.Enabled = true;
 
         }
-
         //private delegate void EnableButtonsCallback(int state);
 
         public void buttonStop_Click1()
@@ -1565,24 +1616,25 @@ namespace ShimmerAPI
 
             if (state == (int)Shimmer.SHIMMER_STATE_CONNECTED)
             {
-                buttonConnect.Enabled = false;
+                buttonConnect.Enabled = true;
+                SetConnectDisconnect(true);
                 //checkBoxTSACheck.Visible = true;
                 checkBoxTSACheck.Checked = ShimmerDevice.mEnableTimeStampAlignmentCheck;
-                buttonDisconnect.Enabled = true;
+                //buttonDisconnect.Enabled = true;
                 if (ShimmerDevice.GetFirmwareIdentifier() == 3)
                 {
                     buttonStreamandLog.Enabled = true;
-                    buttonReadDirectory.Enabled = true;
-                    buttonReadDirectory.Visible = true;
+                    buttonReadDirectory.Enabled = false;
+                    buttonReadDirectory.Visible = false;
                     buttonStreamandLog.Visible = true;
                 }
                 else
                 {
-                    buttonStreamandLog.Visible = false;
+                    buttonStreamandLog.Visible = true;
                     buttonReadDirectory.Visible = false;
                 }
-                buttonStream.Enabled = true;
-                buttonStop.Enabled = false;
+                //buttonStream.Enabled = true;
+                //buttonStop.Enabled = false;
                 configureToolStripMenuItem.Enabled = true;
                 buttonStop_Click1();
             }
@@ -1590,11 +1642,13 @@ namespace ShimmerAPI
             else if (state == (int)Shimmer.SHIMMER_STATE_CONNECTING)
             {
                 buttonConnect.Enabled = false;
-                buttonDisconnect.Enabled = false;
+                //buttonDisconnect.Enabled = false;
                 buttonStreamandLog.Enabled = false;
                 buttonReadDirectory.Enabled = false;
-                buttonStream.Enabled = false;
-                buttonStop.Enabled = false;
+                SetConnectDisconnect(true);
+                buttonConnect.Text = "Connecting...";
+                //buttonStream.Enabled = false;
+                //buttonStop.Enabled = false;
                 configureToolStripMenuItem.Enabled = false;
                 ToolStripMenuItemShow3DOrientation.Enabled = false;
             }
@@ -1602,21 +1656,23 @@ namespace ShimmerAPI
             else if (state == (int)Shimmer.SHIMMER_STATE_NONE)
             {
                 buttonConnect.Enabled = true;
-                buttonDisconnect.Enabled = false;
+                //buttonDisconnect.Enabled = false;
                 buttonStreamandLog.Enabled = false;
                 buttonReadDirectory.Enabled = false;
-                buttonStream.Enabled = false;
-                buttonStop.Enabled = false;
+                SetConnectDisconnect(false);
+                //buttonStream.Enabled = false;
+                //buttonStop.Enabled = false;
                 configureToolStripMenuItem.Enabled = false;
                 ToolStripMenuItemShow3DOrientation.Enabled = false;
             }
             else if (state == (int)Shimmer.SHIMMER_STATE_STREAMING)
             {
-                buttonConnect.Enabled = false;
-                buttonDisconnect.Enabled = true;
+                buttonConnect.Enabled = true;
+                //buttonDisconnect.Enabled = true;
+                SetConnectDisconnect(true);
                 buttonStreamandLog.Enabled = false;
-                buttonStream.Enabled = false;
-                buttonStop.Enabled = true;
+                //buttonStream.Enabled = false;
+                //buttonStop.Enabled = true;
                 // btsd changes1
                 configureToolStripMenuItem.Enabled = true;
                 labelPRR.Visible = true;
@@ -2786,11 +2842,32 @@ namespace ShimmerAPI
 
         private void buttonReload_Click(object sender, EventArgs e)
         {
+            string curComPort = comboBoxComPorts.SelectedText;
             comboBoxComPorts.Items.Clear();
             String[] names = SerialPort.GetPortNames();
+            int i = 0;
+            bool COMfound = false;
             foreach (String s in names)
             {
                 comboBoxComPorts.Items.Add(s);
+                if(s==curComPort)
+                {
+                    comboBoxComPorts.SelectedIndex = i;
+                    COMfound = true;
+                }
+                i++;
+                
+
+            }
+            if (!COMfound&&i>0)
+            {
+                comboBoxComPorts.SelectedIndex = i-1;
+                buttonConnect.Enabled = true;
+            }
+            else if(i==0)
+            {
+                comboBoxComPorts.SelectedText = "No Valid Ports";
+                buttonConnect.Enabled = false;
             }
         }
 
@@ -2884,6 +2961,14 @@ namespace ShimmerAPI
             {
                 textBox_udpPort.Text = outPort.ToString();
             }
+        }
+
+        bool udpMarkersEnabled = true;
+        private void checkBox91_CheckedChanged(object sender, EventArgs e)
+        {
+            udpMarkersEnabled = checkBox91.Checked;
+            textBox_udpPort.Enabled = udpMarkersEnabled;
+
         }
     }
 

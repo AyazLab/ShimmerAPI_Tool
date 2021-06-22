@@ -414,7 +414,7 @@ namespace ShimmerAPI
                             isLogging = true;
                         }
 
-                        stopwatch.Start();
+                        stopwatch.Start(); //restart stopwatch
 
                         // btsd changes 2
                         if (GetFirmwareIdentifier() == 3)

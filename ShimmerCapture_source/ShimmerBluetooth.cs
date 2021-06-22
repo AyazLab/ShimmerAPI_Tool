@@ -822,7 +822,8 @@ namespace ShimmerAPI
             FlushInputConnection();
             KeepObjectCluster = null;
 
-
+            stopwatch = new Stopwatch(); //start pre-stopwatch
+            stopwatch.Start();
 
             while (!StopReading)
             {
@@ -2384,7 +2385,7 @@ namespace ShimmerAPI
 
             int iTimeStamp = getSignalIndex("TimeStamp"); //find index
             objectCluster.RawTimeStamp = (int)newPacket[iTimeStamp];
-            objectCluster.Add("Timestamp", "RAW", "no units", newPacket[iTimeStamp]);
+            objectCluster.Add("TimestampRaw", "RAW", "no units", newPacket[iTimeStamp]);
             double calibratedTS = CalibrateTimeStamp(newPacket[iTimeStamp]);
             objectCluster.Add("Timestamp", "CAL", "mSecs", calibratedTS);
             double time = (DateTime.UtcNow - UnixEpoch).TotalMilliseconds;
