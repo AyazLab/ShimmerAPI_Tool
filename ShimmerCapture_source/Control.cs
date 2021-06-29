@@ -266,6 +266,7 @@ namespace ShimmerAPI
             textBoxSubj.Text = Properties.Settings.Default.Subject;
             textBox_udpPort.Text = Properties.Settings.Default.UDPport;
             checkBox91.Checked=Properties.Settings.Default.UDPenabled;
+            udpMarkersEnabled = checkBox91.Checked;
 
             int.TryParse(textBox_udpPort.Text, out udpPortNo);
 
@@ -1455,8 +1456,12 @@ namespace ShimmerAPI
                 udpListener = new UDPListener(udpPortNo);
                 udpListener.NewMessageReceived += delegate (object o, MyMessageArgs msgData)
                 {
+                    string timestamp =  DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
+
                     string s = o.ToString() + " " + msgData.data.ToString();
                     WriteToFile.WriteMarker(msgData.data[0]);
+                    statusStrip1.Text = ("Marker received: "+timestamp+" : "+s);
+
                 };
             
                 udpListener.StartListener(udpMsgLen);

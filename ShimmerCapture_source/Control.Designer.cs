@@ -563,7 +563,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(1829, 32);
+            this.toolStrip1.Size = new System.Drawing.Size(1829, 34);
             this.toolStrip1.TabIndex = 38;
             this.toolStrip1.Text = "Check For Updates";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
@@ -583,7 +583,7 @@
             this.ToolStripMenuItemQuit.Name = "ToolStripMenuItemQuit";
             this.ToolStripMenuItemQuit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.ToolStripMenuItemQuit.ShowShortcutKeys = false;
-            this.ToolStripMenuItemQuit.Size = new System.Drawing.Size(210, 30);
+            this.ToolStripMenuItemQuit.Size = new System.Drawing.Size(136, 34);
             this.ToolStripMenuItemQuit.Text = "Quit";
             this.ToolStripMenuItemQuit.Click += new System.EventHandler(this.ToolStripMenuItemQuit_Click);
             // 
@@ -604,14 +604,14 @@
             // 
             this.configureToolStripMenuItem.Enabled = false;
             this.configureToolStripMenuItem.Name = "configureToolStripMenuItem";
-            this.configureToolStripMenuItem.Size = new System.Drawing.Size(262, 30);
+            this.configureToolStripMenuItem.Size = new System.Drawing.Size(280, 34);
             this.configureToolStripMenuItem.Text = "Configuration";
             this.configureToolStripMenuItem.Click += new System.EventHandler(this.configureToolStripMenuItem_Click);
             // 
             // ToolStripMenuItemSaveToCSV
             // 
             this.ToolStripMenuItemSaveToCSV.Name = "ToolStripMenuItemSaveToCSV";
-            this.ToolStripMenuItemSaveToCSV.Size = new System.Drawing.Size(262, 30);
+            this.ToolStripMenuItemSaveToCSV.Size = new System.Drawing.Size(280, 34);
             this.ToolStripMenuItemSaveToCSV.Text = "Save To CSV";
             this.ToolStripMenuItemSaveToCSV.Click += new System.EventHandler(this.ToolStripMenuItemSaveToCSV_Click);
             // 
@@ -619,7 +619,7 @@
             // 
             this.ToolStripMenuItemShow3DOrientation.Enabled = false;
             this.ToolStripMenuItemShow3DOrientation.Name = "ToolStripMenuItemShow3DOrientation";
-            this.ToolStripMenuItemShow3DOrientation.Size = new System.Drawing.Size(262, 30);
+            this.ToolStripMenuItemShow3DOrientation.Size = new System.Drawing.Size(280, 34);
             this.ToolStripMenuItemShow3DOrientation.Text = "Show 3D Orientation";
             this.ToolStripMenuItemShow3DOrientation.Click += new System.EventHandler(this.ToolStripMenuItemShow3DOrientation_Click);
             // 
@@ -638,14 +638,14 @@
             // checkForUpdatesToolStripMenuItem
             // 
             this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(242, 30);
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(260, 34);
             this.checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(242, 30);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(260, 34);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -1497,7 +1497,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 1618);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1829, 30);
+            this.statusStrip1.Size = new System.Drawing.Size(1829, 32);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -1785,7 +1785,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1832, 961);
+            this.ClientSize = new System.Drawing.Size(1832, 1028);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
