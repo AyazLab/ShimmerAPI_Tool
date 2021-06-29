@@ -84,10 +84,10 @@ namespace ShimmerAPI
             List<Double> data = objectCluster.GetData();
             String deviceId = objectCluster.GetShimmerID();
 
-            for (int i = 0; i < data.Count; i++)
-            {
-                PCsvFile.Write(deviceId + Delimeter);
-            }
+            //for (int i = 0; i < data.Count; i++)
+            //{
+                PCsvFile.Write(deviceId);
+            //}
             PCsvFile.WriteLine();
             for (int i = 0; i < data.Count; i++)
             {
