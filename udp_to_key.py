@@ -9,12 +9,18 @@ UDP_IP = '127.0.0.1'
 TCP_PORT = 6400
 
 UDP_PORT_Receive = 5501
-UDP_PORT_Relay1 = 5002
-UDP_PORT_Relay2 = 5003
+UDP_PORT_Relay1 = 5504
+UDP_PORT_Relay2 = 5508
 
 udp_socket_receive = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udp_socket_relay_2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udp_socket_relay_1 =socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+udp_socket_receive.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR , 1)
+udp_socket_relay_1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR , 1)
+udp_socket_relay_2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR , 1)
+#udp_socket_relay_1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+#udp_socket_relay_2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 keyboard = Controller()
 
 udp_socket_receive.bind(("", UDP_PORT_Receive))
@@ -36,9 +42,13 @@ print("Relaying  to port #i",UDP_PORT_Relay2)
 
 print("Address bound\n");
 
+
+
 def relayMarker(msg):
     udp_socket_relay_1.sendto(msg,("127.0.0.1", UDP_PORT_Relay1));
     udp_socket_relay_2.sendto(msg,("127.0.0.1", UDP_PORT_Relay2));
+
+relayMarker(b"1")
 
 while True:
     dataBytes, addr = udp_socket_receive.recvfrom(1024)
