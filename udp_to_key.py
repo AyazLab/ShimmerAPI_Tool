@@ -119,5 +119,8 @@ while True:
     elif data== 20:
         keyboard.press(Key.f10)
         keyboard.release(Key.f10)
+    elif data== 76:
+        keyboard.press(Key.f7)
+        keyboard.release(Key.f7)
         
 #conn.close()
