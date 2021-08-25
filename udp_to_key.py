@@ -89,9 +89,9 @@ while True:
     elif data== 0:
         keyboard.press('0')
         keyboard.release('0')
-    elif data== 11:
-        keyboard.press(Key.f1)
-        keyboard.release(Key.f1)
+    #elif data== 11:
+    #    keyboard.press(Key.f1)
+    #    keyboard.release(Key.f1)
     elif data== 12:
         keyboard.press(Key.f2)
         keyboard.release(Key.f2)
@@ -119,8 +119,12 @@ while True:
     elif data== 20:
         keyboard.press(Key.f10)
         keyboard.release(Key.f10)
-    elif data== 76:
+    elif data== 76:   #Left Click
         keyboard.press(Key.f7)
         keyboard.release(Key.f7)
+    elif data== 83:   #SPACE
+        keyboard.press(Key.f8)
+        keyboard.release(Key.f8)
+        
         
 #conn.close()

@@ -1421,7 +1421,7 @@ namespace ShimmerAPI
             checkBox91.Enabled = false;
             textBox_udpPort.Enabled = false;
 
-            timer1.Start();  // timer added from toolbox
+            //timer1.Start();  // timer added from toolbox
             SendKeys.Send("{F7}");
             WriteToFile.WriteMarker(7);
 
@@ -1486,7 +1486,7 @@ namespace ShimmerAPI
 
             SendKeys.Send("{F9}");
             WriteToFile.WriteMarker(9);
-            timer1.Stop();
+            //timer1.Stop();
             textBoxSubj.Enabled = true;
 
         }
@@ -2947,7 +2947,7 @@ namespace ShimmerAPI
         {
 
             //MessageBox.Show("Timer ticked");
-            SendKeys.Send("{F8}");
+            //SendKeys.Send("{F8}");
             WriteToFile.WriteMarker(8);
         }
 
