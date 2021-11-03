@@ -31,6 +31,11 @@ udp_socket_receive.bind(("", UDP_PORT_Receive))
 #mreq = struct.pack("=4sl", socket.inet_aton("127.0.0.1"), socket.INADDR_ANY)
 #udp_socket_receive.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
+host_name = socket.gethostname()
+host_ip = socket.gethostbyname(host_name)
+print("Hostname :  ",host_name)
+print("DAQ IP : "+host_ip+"\n")
+
 print("Listening  to port #i",UDP_PORT_Receive)
 print("Relaying  to port #i",UDP_PORT_Relay1)
 print("Relaying  to port #i",UDP_PORT_Relay2)
