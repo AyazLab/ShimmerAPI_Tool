@@ -7,3 +7,12 @@ D:\Github\Shimmer-C-API\ShimmerAPI\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAP
 D:\Github\Shimmer-C-API\ShimmerAPI\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.csproj.CoreCompileInputs.cache
 D:\Github\Shimmer-C-API\ShimmerAPI\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.dll
 D:\Github\Shimmer-C-API\ShimmerAPI\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.pdb
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\bin\Debug\netstandard2.0\ShimmerAPI.deps.json
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\bin\Debug\netstandard2.0\ShimmerAPI.dll
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\bin\Debug\netstandard2.0\ShimmerAPI.pdb
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.csproj.AssemblyReference.cache
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.AssemblyInfoInputs.cache
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.AssemblyInfo.cs
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.csproj.CoreCompileInputs.cache
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.dll
+D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.pdb
