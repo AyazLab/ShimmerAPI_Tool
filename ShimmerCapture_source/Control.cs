@@ -75,7 +75,7 @@ namespace ShimmerAPI
         private Orientation3D Orientation3DForm;
         private System.IO.Ports.SerialPort SerialPort = new SerialPort();
         private string ComPort;
-        public ShimmerSDBT ShimmerDevice = new ShimmerSDBT("Shimmer", "");
+        public ShimmerLogAndStreamSystemSerialPort ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", "");
         //Plot
         private ZedGraph.ZedGraphControl ZedGraphControl2 = new ZedGraph.ZedGraphControl(); //These need to be defined here for Linux. Otherwise can't later be added
         private ZedGraph.ZedGraphControl ZedGraphControl3 = new ZedGraph.ZedGraphControl();
@@ -202,7 +202,7 @@ namespace ShimmerAPI
             buttonReload_Click(sender, null);
             ComPort = comboBoxComPorts.Text;
             // btsd changes1
-            ShimmerDevice = new ShimmerSDBT("Shimmer", ComPort);
+            ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", ComPort);
             ShimmerDevice.UICallback += this.HandleEvent;
             buttonReload.Enabled = true;
             String[] names = SerialPort.GetPortNames();
@@ -1279,7 +1279,7 @@ namespace ShimmerAPI
         public void Connect()
         {
             //for Shimmer and ShimmerSDBT
-            ShimmerDevice.SetComPort(comboBoxComPorts.Text);
+            ShimmerDevice.SetShimmerAddress(comboBoxComPorts.Text);
 
             //for Shimmer32Feet and ShimmerSDBT32Feet
             //shimmer.SetAddress("00066666940E");
@@ -1739,7 +1739,7 @@ namespace ShimmerAPI
                     if (state == (int)Shimmer.SHIMMER_STATE_CONNECTED)
                     {
                         AppendTextBox("Connected");
-                        ChangeStatusLabel("Connected to " + ShimmerDevice.GetComPort() + ". Firmware Version: " + ShimmerDevice.GetFirmwareVersionFullName());
+                        ChangeStatusLabel("Connected to " + ShimmerDevice.GetShimmerAddress() + ". Firmware Version: " + ShimmerDevice.GetFirmwareVersionFullName());
                         EnableButtons((int)Shimmer.SHIMMER_STATE_CONNECTED);
                         //buttonStop_Click1();
                     }
@@ -1770,19 +1770,19 @@ namespace ShimmerAPI
                     System.Diagnostics.Debug.Write(((Shimmer)sender).GetDeviceName() + message + System.Environment.NewLine);
                     //Message BOX
                     int minorIdentifier = eventArgs.getMinorIndication();
-                    if (minorIdentifier == (int)ShimmerSDBT.ShimmerSDBTMinorIdentifier.MSG_WARNING)
+                    if (minorIdentifier == (int)ShimmerLogAndStreamSystemSerialPort.ShimmerSDBTMinorIdentifier.MSG_WARNING)
                     {
                         MessageBox.Show(message, Control.ApplicationName,
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
-                    else if (minorIdentifier == (int)ShimmerSDBT.ShimmerSDBTMinorIdentifier.MSG_EXTRA_REMOVABLE_DEVICES_DETECTED)
+                    else if (minorIdentifier == (int)ShimmerLogAndStreamSystemSerialPort.ShimmerSDBTMinorIdentifier.MSG_EXTRA_REMOVABLE_DEVICES_DETECTED)
                     {
                         MessageBox.Show(message, "Message");
                         FolderBrowserDialog fbd = new FolderBrowserDialog();
                         DialogResult result = fbd.ShowDialog();
                         ShimmerDevice.SetDrivePath(fbd.SelectedPath);
                     }
-                    else if (minorIdentifier == (int)ShimmerSDBT.ShimmerSDBTMinorIdentifier.MSG_ERROR)
+                    else if (minorIdentifier == (int)ShimmerLogAndStreamSystemSerialPort.ShimmerSDBTMinorIdentifier.MSG_ERROR)
                     {
                         MessageBox.Show(message, Control.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }

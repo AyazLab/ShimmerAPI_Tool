@@ -49,7 +49,7 @@ namespace ShimmerAPI
             {
                 PConfiguration = (Configuration)this.Parent.Parent.Parent;
                 
-                if (PConfiguration.PControlForm.ShimmerDevice.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+                if (PConfiguration.PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
                 {
                     PConfiguration.PControlForm.ShimmerDevice.UICallback += this.HandleEvent;
 
@@ -81,7 +81,7 @@ namespace ShimmerAPI
                     checkBoxVoltageMon.Checked = false;
                     labelAccelRange.Text = "WR Accelerometer Range";
 
-                    comboBoxBaudRate.Items.AddRange(Shimmer.LIST_OF_BAUD_RATE);
+                    comboBoxBaudRate.Items.AddRange(ShimmerBluetooth.LIST_OF_BAUD_RATE);
                     comboBoxBaudRate.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                     comboBoxBaudRate.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxBaudRate.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -91,27 +91,27 @@ namespace ShimmerAPI
                     comboBoxSamplingRate.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxSamplingRate.DropDownStyle = ComboBoxStyle.DropDownList;
 
-                    comboBoxMagRange.Items.AddRange(Shimmer.LIST_OF_MAG_RANGE_SHIMMER3);
+                    comboBoxMagRange.Items.AddRange(ShimmerBluetooth.LIST_OF_MAG_RANGE_SHIMMER3);
                     comboBoxMagRange.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                     comboBoxMagRange.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxMagRange.DropDownStyle = ComboBoxStyle.DropDownList;
 
-                    comboBoxAccelRange.Items.AddRange(Shimmer.LIST_OF_ACCEL_RANGE_SHIMMER3);
+                    comboBoxAccelRange.Items.AddRange(ShimmerBluetooth.LIST_OF_ACCEL_RANGE_SHIMMER3);
                     comboBoxAccelRange.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                     comboBoxAccelRange.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxAccelRange.DropDownStyle = ComboBoxStyle.DropDownList;
 
-                    comboBoxGSRRange.Items.AddRange(Shimmer.LIST_OF_GSR_RANGE);
+                    comboBoxGSRRange.Items.AddRange(ShimmerBluetooth.LIST_OF_GSR_RANGE);
                     comboBoxGSRRange.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                     comboBoxGSRRange.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxGSRRange.DropDownStyle = ComboBoxStyle.DropDownList;
 
-                    comboBoxGyroRange.Items.AddRange(Shimmer.LIST_OF_GYRO_RANGE_SHIMMER3);
+                    comboBoxGyroRange.Items.AddRange(ShimmerBluetooth.LIST_OF_GYRO_RANGE_SHIMMER3);
                     comboBoxGyroRange.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                     comboBoxGyroRange.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxGyroRange.DropDownStyle = ComboBoxStyle.DropDownList;
 
-                    comboBoxPressureRes.Items.AddRange(Shimmer.LIST_OF_PRESSURE_RESOLUTION_SHIMMER3);
+                    comboBoxPressureRes.Items.AddRange(ShimmerBluetooth.LIST_OF_PRESSURE_RESOLUTION_SHIMMER3);
                     comboBoxPressureRes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                     comboBoxPressureRes.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxPressureRes.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -160,7 +160,9 @@ namespace ShimmerAPI
                     comboBoxExgGain.DropDownStyle = ComboBoxStyle.DropDownList;
 
 
-                    if (PConfiguration.PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || PConfiguration.PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+                    if (PConfiguration.PControlForm.ShimmerDevice.GetFirmwareIdentifier() == ShimmerBluetooth.FW_IDENTIFIER_LOGANDSTREAM
+                        //|| PConfiguration.PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || PConfiguration.PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+                        || PConfiguration.PControlForm.ShimmerDevice.compareVersions(ShimmerBluetooth.FW_IDENTIFIER_BTSTREAM, 0, 1, 5))
                     {
                         checkBoxSensor14.Enabled = true;
                     }
@@ -321,7 +323,10 @@ namespace ShimmerAPI
                 checkBoxGyroOnTheFly.Enabled = true;
                 checkBoxLowPowerAccel.Enabled = true;
                 checkBoxLowPowerGyro.Enabled = true;
-                if (PConfiguration.PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || PConfiguration.PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+                //if (PConfiguration.PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || PConfiguration.PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+                if (PConfiguration.PControlForm.ShimmerDevice.GetFirmwareIdentifier() == ShimmerBluetooth.FW_IDENTIFIER_LOGANDSTREAM
+                        //|| PConfiguration.PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || PConfiguration.PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+                        || PConfiguration.PControlForm.ShimmerDevice.compareVersions(ShimmerBluetooth.FW_IDENTIFIER_BTSTREAM, 0, 1, 5))
                 {
                     checkBoxIntExpPower.Enabled = true;
                 }
