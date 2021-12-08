@@ -272,6 +272,8 @@ namespace ShimmerAPI
 
             udpListener = new UDPListener(udpPortNo);
 
+            buttonReload_Click(sender, null);
+
         }
 
       
@@ -1270,7 +1272,7 @@ namespace ShimmerAPI
             {
                 buttonConnect.Text = "Connect";
                 comboBoxComPorts.Enabled = true;
-                buttonReload.Enabled = false;
+                buttonReload.Enabled = true;
             }
         }
 
