@@ -37,8 +37,8 @@ namespace ShimmerAPI
             tabControl1.TabPages[2].Text = "Logging Options";
             tabControl1.TabPages[1].Text = "Advanced ExG";
 
-            if (PControlForm.ShimmerDevice.GetState() == Shimmer.SHIMMER_STATE_STREAMING
-                || PControlForm.ShimmerDevice.GetState() == Shimmer.SHIMMER_STATE_NONE)
+            if (PControlForm.ShimmerDevice.GetState() == ShimmerBluetooth.SHIMMER_STATE_STREAMING
+                || PControlForm.ShimmerDevice.GetState() == ShimmerBluetooth.SHIMMER_STATE_NONE)
             {
                 tabControl1.TabPages[0].Enabled = false;
                 tabControl1.TabPages[1].Enabled = false;
@@ -132,7 +132,7 @@ namespace ShimmerAPI
             buttonOk.Text = "Configuring";
             buttonOk.Enabled = false;
             buttonCancel.Enabled = false;
-            if (userControlGeneralConfig1.comboBoxBaudRate.SelectedIndex != PControlForm.ShimmerDevice.GetBaudRate() && PControlForm.ShimmerDevice.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (userControlGeneralConfig1.comboBoxBaudRate.SelectedIndex != PControlForm.ShimmerDevice.GetBaudRate() && PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 userControlGeneralConfig1.BaudRateChangeFlag = true;
             }
@@ -151,7 +151,7 @@ namespace ShimmerAPI
         {
             if (ExgTabOpened)
             {
-                if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+                if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
                 {
                     userControlExgConfig1.setExGRegBytesinForm();
                 }

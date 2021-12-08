@@ -39,12 +39,12 @@ namespace ShimmerAPI
             comboBoxChip1Channel2Gain.Enabled = true;
             comboBoxChip2Channel1Gain.Enabled = true;
             comboBoxChip2Channel2Gain.Enabled = true;
-            comboBoxChip1Channel1Gain.Items.AddRange(Shimmer.LIST_OF_EXG_GAINS_SHIMMER3);
-            comboBoxChip1Channel2Gain.Items.AddRange(Shimmer.LIST_OF_EXG_GAINS_SHIMMER3);
-            comboBoxChip2Channel1Gain.Items.AddRange(Shimmer.LIST_OF_EXG_GAINS_SHIMMER3);
-            comboBoxChip2Channel2Gain.Items.AddRange(Shimmer.LIST_OF_EXG_GAINS_SHIMMER3);
+            comboBoxChip1Channel1Gain.Items.AddRange(ShimmerBluetooth.LIST_OF_EXG_GAINS_SHIMMER3);
+            comboBoxChip1Channel2Gain.Items.AddRange(ShimmerBluetooth.LIST_OF_EXG_GAINS_SHIMMER3);
+            comboBoxChip2Channel1Gain.Items.AddRange(ShimmerBluetooth.LIST_OF_EXG_GAINS_SHIMMER3);
+            comboBoxChip2Channel2Gain.Items.AddRange(ShimmerBluetooth.LIST_OF_EXG_GAINS_SHIMMER3);
 
-            byte[] exg1Reg = PControlForm.shimmer.GetEXG1RegisterContents();
+            byte[] exg1Reg = PControlForm.ShimmerDevice.GetEXG1RegisterContents();
             textBoxChip1Reg1.Text = exg1Reg[0].ToString();
             textBoxChip1Reg2.Text = exg1Reg[1].ToString();
             textBoxChip1Reg3.Text = exg1Reg[2].ToString();
@@ -55,7 +55,7 @@ namespace ShimmerAPI
             textBoxChip1Reg8.Text = exg1Reg[7].ToString();
             textBoxChip1Reg9.Text = exg1Reg[8].ToString();
             textBoxChip1Reg10.Text = exg1Reg[9].ToString();
-            byte[] exg2Reg = PControlForm.shimmer.GetEXG2RegisterContents();
+            byte[] exg2Reg = PControlForm.ShimmerDevice.GetEXG2RegisterContents();
             textBoxChip2Reg1.Text = exg2Reg[0].ToString();
             textBoxChip2Reg2.Text = exg2Reg[1].ToString();
             textBoxChip2Reg3.Text = exg2Reg[2].ToString();
@@ -70,14 +70,14 @@ namespace ShimmerAPI
             //ECG
             //textBoxEXGChip1Reg1.Text = "2-160-16-64-64-45-0-0-2-3";
             //textBoxEXGChip2Reg1.Text = "2-160-16-64-71-0-0-0-2-1";
-            if (PControlForm.shimmer.IsDefaultECGConfigurationEnabled())
+            if (PControlForm.ShimmerDevice.IsDefaultECGConfigurationEnabled())
             {
                 checkBoxDefaultECG.Checked = true;
             }
             //EMG
             //textBoxEXGChip1Reg1.Text = "2-160-16-105-96-0-0-0-2-3";
             //textBoxEXGChip2Reg1.Text = "2-160-16-129-129-0-0-0-2-1";
-            else if (PControlForm.shimmer.IsDefaultEMGConfigurationEnabled())
+            else if (PControlForm.ShimmerDevice.IsDefaultEMGConfigurationEnabled())
             {
                 checkBoxDefaultEMG.Checked = true;
             }
@@ -137,7 +137,7 @@ namespace ShimmerAPI
 
         private void SetExgGainCmbToCurrentSettings()
         {
-            int exgGain1 = (PControlForm.shimmer.GetEXG1RegisterContents()[3] >> 4) & 7;
+            int exgGain1 = (PControlForm.ShimmerDevice.GetEXG1RegisterContents()[3] >> 4) & 7;
             if (exgGain1 == 0)
             {
                 comboBoxChip1Channel1Gain.SelectedIndex = 4;
@@ -167,7 +167,7 @@ namespace ShimmerAPI
                 comboBoxChip1Channel1Gain.SelectedIndex = 6;
             }
 
-            int exgGain2 = (PControlForm.shimmer.GetEXG1RegisterContents()[4] >> 4) & 7;
+            int exgGain2 = (PControlForm.ShimmerDevice.GetEXG1RegisterContents()[4] >> 4) & 7;
             if (exgGain2 == 0)
             {
                 comboBoxChip1Channel2Gain.SelectedIndex = 4;
@@ -197,7 +197,7 @@ namespace ShimmerAPI
                 comboBoxChip1Channel2Gain.SelectedIndex = 6;
             }
 
-            int exgGain3 = (PControlForm.shimmer.GetEXG2RegisterContents()[3] >> 4) & 7;
+            int exgGain3 = (PControlForm.ShimmerDevice.GetEXG2RegisterContents()[3] >> 4) & 7;
             if (exgGain3 == 0)
             {
                 comboBoxChip2Channel1Gain.SelectedIndex = 4;
@@ -227,7 +227,7 @@ namespace ShimmerAPI
                 comboBoxChip2Channel1Gain.SelectedIndex = 6;
             }
 
-            int exgGain4 = (PControlForm.shimmer.GetEXG2RegisterContents()[4] >> 4) & 7;
+            int exgGain4 = (PControlForm.ShimmerDevice.GetEXG2RegisterContents()[4] >> 4) & 7;
             if (exgGain4 == 0)
             {
                 comboBoxChip2Channel2Gain.SelectedIndex = 4;
@@ -591,28 +591,28 @@ namespace ShimmerAPI
             else
             {
                 //FILL EXG CONFIGURATIONS CHIP 1
-                textBoxChip1Reg1.Text = PControlForm.shimmer.GetEXG1RegisterByte(0).ToString();
-                textBoxChip1Reg2.Text = PControlForm.shimmer.GetEXG1RegisterByte(1).ToString();
-                textBoxChip1Reg3.Text = PControlForm.shimmer.GetEXG1RegisterByte(2).ToString();
-                textBoxChip1Reg4.Text = PControlForm.shimmer.GetEXG1RegisterByte(3).ToString();
-                textBoxChip1Reg5.Text = PControlForm.shimmer.GetEXG1RegisterByte(4).ToString();
-                textBoxChip1Reg6.Text = PControlForm.shimmer.GetEXG1RegisterByte(5).ToString();
-                textBoxChip1Reg7.Text = PControlForm.shimmer.GetEXG1RegisterByte(6).ToString();
-                textBoxChip1Reg8.Text = PControlForm.shimmer.GetEXG1RegisterByte(7).ToString();
-                textBoxChip1Reg9.Text = PControlForm.shimmer.GetEXG1RegisterByte(8).ToString();
-                textBoxChip1Reg10.Text = PControlForm.shimmer.GetEXG1RegisterByte(9).ToString();
+                textBoxChip1Reg1.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(0).ToString();
+                textBoxChip1Reg2.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(1).ToString();
+                textBoxChip1Reg3.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(2).ToString();
+                textBoxChip1Reg4.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(3).ToString();
+                textBoxChip1Reg5.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(4).ToString();
+                textBoxChip1Reg6.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(5).ToString();
+                textBoxChip1Reg7.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(6).ToString();
+                textBoxChip1Reg8.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(7).ToString();
+                textBoxChip1Reg9.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(8).ToString();
+                textBoxChip1Reg10.Text = PControlForm.ShimmerDevice.GetEXG1RegisterByte(9).ToString();
 
                 //FILL EXG CONFIGURATIONS CHIP2
-                textBoxChip2Reg1.Text = PControlForm.shimmer.GetEXG2RegisterByte(0).ToString();
-                textBoxChip2Reg2.Text = PControlForm.shimmer.GetEXG2RegisterByte(1).ToString();
-                textBoxChip2Reg3.Text = PControlForm.shimmer.GetEXG2RegisterByte(2).ToString();
-                textBoxChip2Reg4.Text = PControlForm.shimmer.GetEXG2RegisterByte(3).ToString();
-                textBoxChip2Reg5.Text = PControlForm.shimmer.GetEXG2RegisterByte(4).ToString();
-                textBoxChip2Reg6.Text = PControlForm.shimmer.GetEXG2RegisterByte(5).ToString();
-                textBoxChip2Reg7.Text = PControlForm.shimmer.GetEXG2RegisterByte(6).ToString();
-                textBoxChip2Reg8.Text = PControlForm.shimmer.GetEXG2RegisterByte(7).ToString();
-                textBoxChip2Reg9.Text = PControlForm.shimmer.GetEXG2RegisterByte(8).ToString();
-                textBoxChip2Reg10.Text = PControlForm.shimmer.GetEXG2RegisterByte(9).ToString();
+                textBoxChip2Reg1.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(0).ToString();
+                textBoxChip2Reg2.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(1).ToString();
+                textBoxChip2Reg3.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(2).ToString();
+                textBoxChip2Reg4.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(3).ToString();
+                textBoxChip2Reg5.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(4).ToString();
+                textBoxChip2Reg6.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(5).ToString();
+                textBoxChip2Reg7.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(6).ToString();
+                textBoxChip2Reg8.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(7).ToString();
+                textBoxChip2Reg9.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(8).ToString();
+                textBoxChip2Reg10.Text = PControlForm.ShimmerDevice.GetEXG2RegisterByte(9).ToString();
             }
         }
 
@@ -629,7 +629,7 @@ namespace ShimmerAPI
                 PControlForm.EnableHPF_5HZ = true;
                 PControlForm.EnableHPF_0_5HZ = false;
                 PControlForm.EnableHPF_0_05HZ = false;
-                if (PControlForm.shimmer.GetSamplingRate() < 50)
+                if (PControlForm.ShimmerDevice.GetSamplingRate() < 50)
                 {
                     MessageBox.Show("High Pass Filter only valid for the following frequencies, 51.2Hz, 102.4Hz, 204.8Hz, 256Hz, 512Hz, 1024Hz", 
                         Control.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -640,7 +640,7 @@ namespace ShimmerAPI
                 PControlForm.EnableHPF_5HZ = false;
                 PControlForm.EnableHPF_0_5HZ = true;
                 PControlForm.EnableHPF_0_05HZ = false;
-                if (PControlForm.shimmer.GetSamplingRate() < 50)
+                if (PControlForm.ShimmerDevice.GetSamplingRate() < 50)
                 {
                     MessageBox.Show("High Pass Filter only valid for the following frequencies, 51.2Hz, 102.4Hz, 204.8Hz, 256Hz, 512Hz, 1024Hz", 
                         Control.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -651,7 +651,7 @@ namespace ShimmerAPI
                 PControlForm.EnableHPF_5HZ = false;
                 PControlForm.EnableHPF_0_5HZ = false;
                 PControlForm.EnableHPF_0_05HZ = true;
-                if (PControlForm.shimmer.GetSamplingRate() < 50)
+                if (PControlForm.ShimmerDevice.GetSamplingRate() < 50)
                 {
                     MessageBox.Show("High Pass Filter only valid for the following frequencies, 51.2Hz, 102.4Hz, 204.8Hz, 256Hz, 512Hz, 1024Hz", 
                         Control.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -668,7 +668,7 @@ namespace ShimmerAPI
             {
                 PControlForm.EnableBSF_49_51HZ = true;
                 PControlForm.EnableBSF_59_61HZ = false;
-                if (PControlForm.shimmer.GetSamplingRate() < 250)
+                if (PControlForm.ShimmerDevice.GetSamplingRate() < 250)
                 {
                     MessageBox.Show("Band Stop Filter only valid for the following frequencies, 256Hz, 512Hz, 1024Hz", 
                         Control.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -678,7 +678,7 @@ namespace ShimmerAPI
             {
                 PControlForm.EnableBSF_49_51HZ = false;
                 PControlForm.EnableBSF_59_61HZ = true;
-                if (PControlForm.shimmer.GetSamplingRate() < 250)
+                if (PControlForm.ShimmerDevice.GetSamplingRate() < 250)
                 {
                     MessageBox.Show("Band Stop Filter only valid for the following frequencies, 256Hz, 512Hz, 1024Hz", 
                         Control.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -698,7 +698,7 @@ namespace ShimmerAPI
                              Convert.ToByte(textBoxChip2Reg4.Text), Convert.ToByte(textBoxChip2Reg5.Text), Convert.ToByte(textBoxChip2Reg6.Text), 
                              Convert.ToByte(textBoxChip2Reg7.Text), Convert.ToByte(textBoxChip2Reg8.Text), Convert.ToByte(textBoxChip2Reg9.Text), 
                              Convert.ToByte(textBoxChip2Reg10.Text) };
-            PControlForm.shimmer.WriteEXGConfigurations(config1, config2);
+            PControlForm.ShimmerDevice.WriteEXGConfigurations(config1, config2);
         }
 
     }

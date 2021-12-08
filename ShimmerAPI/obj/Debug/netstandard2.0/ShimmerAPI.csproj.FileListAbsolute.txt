@@ -16,3 +16,13 @@ D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.Assembl
 D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.csproj.CoreCompileInputs.cache
 D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.dll
 D:\Github\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.pdb
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\bin\Debug\netstandard2.0\ShimmerAPI.deps.json
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\bin\Debug\netstandard2.0\ShimmerAPI.dll
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\bin\Debug\netstandard2.0\ShimmerAPI.pdb
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.csproj.AssemblyReference.cache
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.AssemblyInfoInputs.cache
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.AssemblyInfo.cs
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.csproj.CoreCompileInputs.cache
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.dll
+C:\Users\jlw437\OneDrive - Drexel University\Documents\GitHub\ShimmerAPI_Tool\ShimmerAPI\obj\Debug\netstandard2.0\ShimmerAPI.pdb

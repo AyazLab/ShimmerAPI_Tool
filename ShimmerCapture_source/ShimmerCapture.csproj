@@ -128,6 +128,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configure.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configure.Designer.cs">
+      <DependentUpon>Configure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExgConfigure.cs" />
+    <Compile Include="ExgConfigure.Designer.cs">
+      <DependentUpon>ExgConfigure.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,7 +175,6 @@
     <Compile Include="Control.Designer.cs">
       <DependentUpon>Control.cs</DependentUpon>
     </Compile>
-    <Compile Include="ObjectCluster.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
@@ -188,6 +197,12 @@
     <Compile Include="UserControlSdConfig.designer.cs">
       <DependentUpon>UserControlSdConfig.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Configure.resx">
+      <DependentUpon>Configure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExgConfigure.resx">
+      <DependentUpon>ExgConfigure.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormAbout.resx">
       <DependentUpon>FormAbout.cs</DependentUpon>
     </EmbeddedResource>

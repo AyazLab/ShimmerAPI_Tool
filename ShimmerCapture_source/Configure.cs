@@ -29,7 +29,7 @@ namespace ShimmerAPI
 
         private void Configure_Load(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 checkBoxSensor1.Text = "Low Noise Accelerometer";
                 checkBoxSensor2.Text = "Wide Range Accelerometer";
@@ -60,13 +60,13 @@ namespace ShimmerAPI
                 checkBoxSensor19.Visible = true;
 
                 comboBoxSamplingRate.Items.AddRange(SamplingRatesStringShimmer3);
-                comboBoxMagRange.Items.AddRange(Shimmer.LIST_OF_MAG_RANGE_SHIMMER3);
-                comboBoxAccelRange.Items.AddRange(Shimmer.LIST_OF_ACCEL_RANGE_SHIMMER3);
-                comboBoxGSRRange.Items.AddRange(Shimmer.LIST_OF_GSR_RANGE);
-                comboBoxGyroRange.Items.AddRange(Shimmer.LIST_OF_GYRO_RANGE_SHIMMER3);
-                comboBoxPressureRes.Items.AddRange(Shimmer.LIST_OF_PRESSURE_RESOLUTION_SHIMMER3);
-
-                if (PControlForm.shimmer.GetFirmwareVersion() > 0.1 || PControlForm.shimmer.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+                comboBoxMagRange.Items.AddRange(ShimmerBluetooth.LIST_OF_MAG_RANGE_SHIMMER3);
+                comboBoxAccelRange.Items.AddRange(ShimmerBluetooth.LIST_OF_ACCEL_RANGE_SHIMMER3);
+                comboBoxGSRRange.Items.AddRange(ShimmerBluetooth.LIST_OF_GSR_RANGE);
+                comboBoxGyroRange.Items.AddRange(ShimmerBluetooth.LIST_OF_GYRO_RANGE_SHIMMER3);
+                comboBoxPressureRes.Items.AddRange(ShimmerBluetooth.LIST_OF_PRESSURE_RESOLUTION_SHIMMER3);
+                //PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || 
+                if (PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
                 {
                     checkBoxSensor14.Enabled = true;
                 }
@@ -74,7 +74,8 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor14.Enabled = false;
                 }
-                if ((PControlForm.shimmer.GetFirmwareVersion() == 0.2 & PControlForm.shimmer.GetFirmwareInternal() >= 8) || (PControlForm.shimmer.GetFirmwareVersion() >= 0.3))// exg only supported from BTStream 0.2.8 onwards. 
+                //PControlForm.ShimmerDevice.GetFirmwareVersion() == 0.2 & 
+                if ((PControlForm.ShimmerDevice.GetFirmwareInternal() >= 8) )//|| (PControlForm.ShimmerDevice.GetFirmwareVersion() >= 0.3))// exg only supported from BTStream 0.2.8 onwards. 
                 {
                     //ExG
                     checkBoxSensor15.Enabled = true;
@@ -89,7 +90,7 @@ namespace ShimmerAPI
                     checkBoxSensor17.Enabled = false;
                     checkBoxSensor18.Enabled = false;
                 }
-                if ((PControlForm.shimmer.GetFirmwareVersion() == 0.3 & PControlForm.shimmer.GetFirmwareInternal() >= 1) || (PControlForm.shimmer.GetFirmwareVersion() >= 0.4))// strain gauge only supported from BTStream 0.3.1 onwards. 
+                if (true)//(PControlForm.ShimmerDevice.GetFirmwareVersion() == 0.3 & PControlForm.ShimmerDevice.GetFirmwareInternal() >= 1) || (PControlForm.ShimmerDevice.GetFirmwareVersion() >= 0.4))// strain gauge only supported from BTStream 0.3.1 onwards. 
                 {
                     //Strain Gauge
                     checkBoxSensor19.Enabled = true;
@@ -121,10 +122,10 @@ namespace ShimmerAPI
                 checkBoxSensor18.Visible = false;
                 checkBoxSensor19.Visible = false;
 
-                comboBoxMagRange.Items.AddRange(Shimmer.LIST_OF_MAG_RANGE_SHIMMER2);
+                comboBoxMagRange.Items.AddRange(ShimmerBluetooth.LIST_OF_MAG_RANGE_SHIMMER2);
                 comboBoxSamplingRate.Items.AddRange(SamplingRatesStringShimmer2);
-                comboBoxAccelRange.Items.AddRange(Shimmer.LIST_OF_ACCEL_RANGE_SHIMMER2);
-                comboBoxGSRRange.Items.AddRange(Shimmer.LIST_OF_GSR_RANGE_SHIMMER2);
+                comboBoxAccelRange.Items.AddRange(ShimmerBluetooth.LIST_OF_ACCEL_RANGE_SHIMMER2);
+                comboBoxGSRRange.Items.AddRange(ShimmerBluetooth.LIST_OF_GSR_RANGE_SHIMMER2);
             }
 
             checkBox5VReg.Enabled = false;
@@ -159,8 +160,8 @@ namespace ShimmerAPI
         private void ConfigSetup()
         {
             checkEnabledSensors();
-            double samplingRate = PControlForm.shimmer.GetSamplingRate();
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            double samplingRate = PControlForm.ShimmerDevice.GetSamplingRate();
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 checkBox5VReg.Enabled = false;
                 checkBoxVoltageMon.Enabled = false;
@@ -168,7 +169,8 @@ namespace ShimmerAPI
                 checkBoxGyroOnTheFly.Enabled = true;
                 checkBoxLowPowerAccel.Enabled = true;
                 checkBoxLowPowerGyro.Enabled = true;
-                if (PControlForm.shimmer.GetFirmwareVersion() > 0.1 || PControlForm.shimmer.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
+    //PControlForm.ShimmerDevice.GetFirmwareVersion() > 0.1 || 
+                if (PControlForm.ShimmerDevice.GetFirmwareInternal() >= 5) // gsr only supported from BTStream 0.1.5 onwards. 
                 {
                     checkBoxIntExpPower.Enabled = true;
                 }
@@ -210,7 +212,7 @@ namespace ShimmerAPI
                     comboBoxSamplingRate.SelectedIndex = 0;
                 }
 
-                if (PControlForm.shimmer.GetInternalExpPower() == 1)
+                if (PControlForm.ShimmerDevice.GetInternalExpPower() == 1)
                 {
                     checkBoxIntExpPower.Checked = true;
                 }
@@ -219,9 +221,9 @@ namespace ShimmerAPI
                     checkBoxIntExpPower.Checked = false;
                 }
 
-                comboBoxMagRange.SelectedIndex = PControlForm.shimmer.GetMagRange() - 1;
-                comboBoxGyroRange.SelectedIndex = PControlForm.shimmer.GetGyroRange();
-                comboBoxPressureRes.SelectedIndex = PControlForm.shimmer.GetPressureResolution();
+                comboBoxMagRange.SelectedIndex = PControlForm.ShimmerDevice.GetMagRange() - 1;
+                comboBoxGyroRange.SelectedIndex = PControlForm.ShimmerDevice.GetGyroRange();
+                comboBoxPressureRes.SelectedIndex = PControlForm.ShimmerDevice.GetPressureResolution();
 
                 checkBoxEnablePPGtoHR.Checked = PControlForm.GetEnablePPGtoHR();
                 numericUpDownBeatsToAve.Value = PControlForm.GetNumberOfBeatsToAve();
@@ -307,25 +309,25 @@ namespace ShimmerAPI
             }
 
             //CheckBoxes
-            checkBoxLowPowerMag.Checked = PControlForm.shimmer.LowPowerMagEnabled;
-            checkBoxLowPowerAccel.Checked = PControlForm.shimmer.LowPowerAccelEnabled;
-            checkBoxLowPowerGyro.Checked = PControlForm.shimmer.LowPowerGyroEnabled;
-            checkBox5VReg.Checked = PControlForm.shimmer.GetVReg();
-            checkBoxVoltageMon.Checked = PControlForm.shimmer.GetPMux();
-            checkBox3DOrientation.Checked = PControlForm.shimmer.Is3DOrientationEnabled();
-            checkBoxGyroOnTheFly.Checked = PControlForm.shimmer.IsGyroOnTheFlyCalEnabled();
+            checkBoxLowPowerMag.Checked = PControlForm.ShimmerDevice.LowPowerMagEnabled;
+            checkBoxLowPowerAccel.Checked = PControlForm.ShimmerDevice.LowPowerAccelEnabled;
+            checkBoxLowPowerGyro.Checked = PControlForm.ShimmerDevice.LowPowerGyroEnabled;
+            checkBox5VReg.Checked = PControlForm.ShimmerDevice.GetVReg();
+            checkBoxVoltageMon.Checked = PControlForm.ShimmerDevice.GetPMux();
+            checkBox3DOrientation.Checked = PControlForm.ShimmerDevice.Is3DOrientationEnabled();
+            checkBoxGyroOnTheFly.Checked = PControlForm.ShimmerDevice.IsGyroOnTheFlyCalEnabled();
 
             //ComboBoxes
-            comboBoxAccelRange.SelectedIndex = PControlForm.shimmer.GetAccelRange();
-            comboBoxGSRRange.SelectedIndex = PControlForm.shimmer.GetGSRRange();
+            comboBoxAccelRange.SelectedIndex = PControlForm.ShimmerDevice.GetAccelRange();
+            comboBoxGSRRange.SelectedIndex = PControlForm.ShimmerDevice.GetGSRRange();
         }
 
         private void checkEnabledSensors()
         {
-            int enabledSensors = PControlForm.shimmer.GetEnabledSensors();
-            if (PControlForm.shimmer.GetShimmerVersion() != (int)Shimmer.ShimmerVersion.SHIMMER3)
+            int enabledSensors = PControlForm.ShimmerDevice.GetEnabledSensors();
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() != (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_ACCEL) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_ACCEL) > 0)
                 {
                     checkBoxSensor1.Checked = true;
                     comboBoxAccelRange.Enabled = true;
@@ -335,7 +337,7 @@ namespace ShimmerAPI
                     checkBoxSensor1.Checked = false;
                     comboBoxAccelRange.Enabled = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_GYRO) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_GYRO) > 0)
                 {
                     checkBoxSensor2.Checked = true;
                 }
@@ -343,16 +345,16 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor2.Checked = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_MAG) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_MAG) > 0)
                 {
                     checkBoxSensor3.Checked = true;
                     checkBoxLowPowerMag.Enabled = true;
 
-                    if (!PControlForm.shimmer.GetFirmwareVersionFullName().Equals("BoilerPlate 0.1.0"))
+                    if (!PControlForm.ShimmerDevice.GetFirmwareVersionFullName().Equals("BoilerPlate 0.1.0"))
                     {
                         checkBoxLowPowerMag.Enabled = true;
                         comboBoxMagRange.Enabled = true;
-                        comboBoxMagRange.SelectedIndex = PControlForm.shimmer.GetMagRange();
+                        comboBoxMagRange.SelectedIndex = PControlForm.ShimmerDevice.GetMagRange();
                     }
                     else
                     {
@@ -366,7 +368,7 @@ namespace ShimmerAPI
                     checkBoxLowPowerMag.Enabled = false;
                     comboBoxMagRange.Enabled = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_GSR) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_GSR) > 0)
                 {
                     checkBoxSensor7.Checked = true;
                     comboBoxGSRRange.Enabled = true;
@@ -376,7 +378,7 @@ namespace ShimmerAPI
                     checkBoxSensor7.Checked = false;
                     comboBoxGSRRange.Enabled = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_ECG) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_ECG) > 0)
                 {
                     checkBoxSensor5.Checked = true;
                 }
@@ -384,7 +386,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor5.Checked = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_EMG) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_EMG) > 0)
                 {
                     checkBoxSensor6.Checked = true;
                 }
@@ -392,7 +394,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor6.Checked = false;
                 }
-                if (((enabledSensors & 0xFF00) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_STRAIN_GAUGE) > 0)
+                if (((enabledSensors & 0xFF00) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_STRAIN_GAUGE) > 0)
                 {
                     checkBoxSensor10.Checked = true;
                     checkBox5VReg.Enabled = false;
@@ -402,7 +404,7 @@ namespace ShimmerAPI
                     checkBoxSensor10.Checked = false;
                     checkBox5VReg.Enabled = true;
                 }
-                if (((enabledSensors & 0xFF00) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_HEART) > 0)
+                if (((enabledSensors & 0xFF00) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_HEART) > 0)
                 {
                     checkBoxSensor11.Checked = true;
                 }
@@ -410,7 +412,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor11.Checked = false;
                 }
-                if ((((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A0) > 0))  //&& getPMux() == 0
+                if ((((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A0) > 0))  //&& getPMux() == 0
                 {
                     checkBoxSensor8.Checked = true;
                 }
@@ -418,7 +420,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor8.Checked = false;
                 }
-                if ((((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A7) > 0))  //&& getPMux() == 0)
+                if ((((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A7) > 0))  //&& getPMux() == 0)
                 {
                     checkBoxSensor9.Checked = true;
                 }
@@ -426,7 +428,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor9.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_VBATT) > 0)
+                if (((enabledSensors & 0xFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_VBATT) > 0)
                 {
                     checkBoxSensor4.Checked = true;
                 }
@@ -438,7 +440,7 @@ namespace ShimmerAPI
             }
             else
             {
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_A_ACCEL) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_A_ACCEL) > 0)
                 {
                     checkBoxSensor1.Checked = true;
                 }
@@ -446,7 +448,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor1.Checked = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_D_ACCEL) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_D_ACCEL) > 0)
                 {
                     checkBoxSensor2.Checked = true;
                     comboBoxAccelRange.Enabled = true;
@@ -456,7 +458,7 @@ namespace ShimmerAPI
                     checkBoxSensor2.Checked = false;
                     comboBoxAccelRange.Enabled = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_MPU9150_GYRO) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_MPU9150_GYRO) > 0)
                 {
                     checkBoxSensor3.Checked = true;
                     comboBoxGyroRange.Enabled = true;
@@ -466,7 +468,7 @@ namespace ShimmerAPI
                     checkBoxSensor3.Checked = false;
                     comboBoxGyroRange.Enabled = false;
                 }
-                if (((enabledSensors & 0xFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_LSM303DLHC_MAG) > 0)
+                if (((enabledSensors & 0xFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_LSM303DLHC_MAG) > 0)
                 {
                     checkBoxSensor4.Checked = true;
                     checkBoxLowPowerMag.Enabled = true;
@@ -478,7 +480,7 @@ namespace ShimmerAPI
                     checkBoxLowPowerMag.Enabled = false;
                     comboBoxMagRange.Enabled = false;
                 }
-                if (((enabledSensors & 0xFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_VBATT) > 0)
+                if (((enabledSensors & 0xFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_VBATT) > 0)
                 {
                     checkBoxSensor5.Checked = true;
                 }
@@ -486,7 +488,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor5.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXT_A15) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXT_A15) > 0)
                 {
                     checkBoxSensor8.Checked = true;
                 }
@@ -494,7 +496,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor8.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXT_A7) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXT_A7) > 0)
                 {
                     checkBoxSensor6.Checked = true;
                 }
@@ -502,7 +504,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor6.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXT_A6) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXT_A6) > 0)
                 {
                     checkBoxSensor7.Checked = true;
                 }
@@ -510,7 +512,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor7.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A1) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A1) > 0)
                 {
                     checkBoxSensor9.Checked = true;
                 }
@@ -518,7 +520,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor9.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A12) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A12) > 0)
                 {
                     checkBoxSensor10.Checked = true;
                 }
@@ -526,7 +528,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor10.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A13) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A13) > 0)
                 {
                     checkBoxSensor11.Checked = true;
                 }
@@ -534,7 +536,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor11.Checked = false;
                 }
-                if (((enabledSensors & 0xFFFFFF) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A14) > 0)
+                if (((enabledSensors & 0xFFFFFF) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A14) > 0)
                 {
                     checkBoxSensor12.Checked = true;
                 }
@@ -542,7 +544,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor12.Checked = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_BMP180_PRESSURE) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_BMP180_PRESSURE) > 0)
                 {
                     checkBoxSensor13.Checked = true;
                     comboBoxPressureRes.Enabled = true;
@@ -552,7 +554,7 @@ namespace ShimmerAPI
                     checkBoxSensor13.Checked = false;
                     comboBoxPressureRes.Enabled = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_GSR) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_GSR) > 0)
                 {
                     checkBoxSensor14.Checked = true;
                     comboBoxGSRRange.Enabled = true;
@@ -562,7 +564,7 @@ namespace ShimmerAPI
                     checkBoxSensor14.Checked = false;
                     comboBoxGSRRange.Enabled = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG1_24BIT) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG1_24BIT) > 0)
                 {
                     checkBoxSensor15.Checked = true;
                 }
@@ -570,7 +572,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor15.Checked = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG2_24BIT) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG2_24BIT) > 0)
                 {
                     checkBoxSensor16.Checked = true;
                 }
@@ -578,7 +580,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor16.Checked = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG1_16BIT) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG1_16BIT) > 0)
                 {
                     checkBoxSensor17.Checked = true;
                 }
@@ -586,7 +588,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor17.Checked = false;
                 }
-                if ((enabledSensors & (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG2_16BIT) > 0)
+                if ((enabledSensors & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG2_16BIT) > 0)
                 {
                     checkBoxSensor18.Checked = true;
                 }
@@ -594,7 +596,7 @@ namespace ShimmerAPI
                 {
                     checkBoxSensor18.Checked = false;
                 }
-                if (((enabledSensors & 0xFF00) & (int)Shimmer.SensorBitmapShimmer3.SENSOR_STRAIN) > 0)
+                if (((enabledSensors & 0xFF00) & (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_BMP180_PRESSURE) > 0)
                 {
                     checkBoxSensor19.Checked = true;
                 }
@@ -607,7 +609,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor1_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor1.Checked)
                 {
@@ -637,7 +639,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor2_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor2.Checked)
                 {
@@ -672,7 +674,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor3_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor3.Checked)
                 {
@@ -692,7 +694,7 @@ namespace ShimmerAPI
                     checkBoxSensor6.Checked = false;
                     checkBoxSensor7.Checked = false;
                     checkBoxSensor9.Checked = false;
-                    if (!PControlForm.shimmer.GetFirmwareVersionFullName().Equals("BoilerPlate 0.1.0"))
+                    if (!PControlForm.ShimmerDevice.GetFirmwareVersionFullName().Equals("BoilerPlate 0.1.0"))
                     {
                         comboBoxMagRange.Enabled = true;
                         checkBoxLowPowerMag.Enabled = true;
@@ -711,7 +713,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor4_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor4.Checked)
                 {
@@ -740,7 +742,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor5_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor5.Checked)
                 {
@@ -772,7 +774,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor6_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor6.Checked)
                 {
@@ -804,7 +806,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor7_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor7.Checked)
                 {
@@ -837,7 +839,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor9_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor9.Checked)
                 {
@@ -869,7 +871,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor10_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor10.Checked)
                 {
@@ -908,7 +910,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor11_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor11.Checked)
                 {
@@ -945,7 +947,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor12_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor12.Checked)
                 {
@@ -978,7 +980,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor13_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor13.Checked)
                 {
@@ -1004,7 +1006,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor14_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor14.Checked)
                 {
@@ -1039,7 +1041,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor15_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor15.Checked)
                 {
@@ -1076,7 +1078,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor16_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor16.Checked)
                 {
@@ -1115,7 +1117,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor17_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor17.Checked)
                 {
@@ -1152,7 +1154,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor18_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor18.Checked)
                 {
@@ -1192,7 +1194,7 @@ namespace ShimmerAPI
 
         private void checkBoxSensor19_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor19.Checked)
                 {
@@ -1229,7 +1231,7 @@ namespace ShimmerAPI
 
         private void checkBox3DOrientation_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBox3DOrientation.Checked)
                 {
@@ -1260,7 +1262,7 @@ namespace ShimmerAPI
 
         private void checkBoxGyroOnTheFly_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxGyroOnTheFly.Checked)
                 {
@@ -1286,7 +1288,7 @@ namespace ShimmerAPI
 
         private void checkBox5VReg_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() != (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() != (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBox5VReg.Checked)
                 {
@@ -1301,7 +1303,7 @@ namespace ShimmerAPI
 
         private void checkBoxIntExpPower_Click(object sender, EventArgs e)
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxIntExpPower.Checked)
                 {
@@ -1336,7 +1338,7 @@ namespace ShimmerAPI
 
         private void buttonToggleLED_Click(object sender, EventArgs e)
         {
-            PControlForm.shimmer.ToggleLED();
+            PControlForm.ShimmerDevice.ToggleLED();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -1353,7 +1355,7 @@ namespace ShimmerAPI
         {
             int selectedIndexSamplingRate = comboBoxSamplingRate.SelectedIndex;
             double samplingRate = -1;
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 switch (selectedIndexSamplingRate)
                 {
@@ -1384,15 +1386,15 @@ namespace ShimmerAPI
                 }
                 if (checkBoxIntExpPower.Checked)
                 {
-                    PControlForm.shimmer.WriteInternalExpPower(1);
+                    PControlForm.ShimmerDevice.WriteInternalExpPower(1);
                 }
                 else
                 {
-                    PControlForm.shimmer.WriteInternalExpPower(0);
+                    PControlForm.ShimmerDevice.WriteInternalExpPower(0);
                 }
-                PControlForm.shimmer.WriteMagRange(comboBoxMagRange.SelectedIndex + 1);
-                PControlForm.shimmer.WriteGyroRange(comboBoxGyroRange.SelectedIndex);
-                PControlForm.shimmer.WritePressureResolution(comboBoxPressureRes.SelectedIndex);
+                PControlForm.ShimmerDevice.WriteMagRange(comboBoxMagRange.SelectedIndex + 1);
+                PControlForm.ShimmerDevice.WriteGyroRange(comboBoxGyroRange.SelectedIndex);
+                PControlForm.ShimmerDevice.WritePressureResolution(comboBoxPressureRes.SelectedIndex);
 
                 if (checkBoxSensor11.Checked && checkBoxIntExpPower.Checked)
                 {
@@ -1450,23 +1452,23 @@ namespace ShimmerAPI
                 }
                 if (checkBox5VReg.Checked)
                 {
-                    PControlForm.shimmer.Write5VReg(1);
+                    PControlForm.ShimmerDevice.Write5VReg(1);
                 }
                 else
                 {
-                    PControlForm.shimmer.Write5VReg(0);
+                    PControlForm.ShimmerDevice.Write5VReg(0);
                 }
                 if (checkBoxVoltageMon.Checked)
                 {
-                    PControlForm.shimmer.WritePMux(1);
+                    PControlForm.ShimmerDevice.WritePMux(1);
                 }
                 else
                 {
-                    PControlForm.shimmer.WritePMux(0);
+                    PControlForm.ShimmerDevice.WritePMux(0);
                 }
-                if (!PControlForm.shimmer.GetFirmwareVersionFullName().Equals("BoilerPlate 0.1.0"))
+                if (!PControlForm.ShimmerDevice.GetFirmwareVersionFullName().Equals("BoilerPlate 0.1.0"))
                 {
-                    PControlForm.shimmer.WriteMagRange(comboBoxMagRange.SelectedIndex);
+                    PControlForm.ShimmerDevice.WriteMagRange(comboBoxMagRange.SelectedIndex);
                 }
 
                 if (checkBoxSensor5.Checked)
@@ -1478,14 +1480,14 @@ namespace ShimmerAPI
                     PControlForm.EnableECGtoHR(false);
                 }
             }
-            PControlForm.shimmer.WriteSamplingRate(samplingRate);
-            PControlForm.shimmer.SetLowPowerMag(checkBoxLowPowerMag.Checked);
-            PControlForm.shimmer.SetLowPowerAccel(checkBoxLowPowerAccel.Checked);
-            PControlForm.shimmer.SetLowPowerGyro(checkBoxLowPowerGyro.Checked);
-            PControlForm.shimmer.Set3DOrientation(checkBox3DOrientation.Checked);
-            PControlForm.shimmer.SetGyroOnTheFlyCalibration(checkBoxGyroOnTheFly.Checked, 100, 1.2);
-            PControlForm.shimmer.WriteAccelRange(comboBoxAccelRange.SelectedIndex);
-            PControlForm.shimmer.WriteGSRRange(comboBoxGSRRange.SelectedIndex);
+            PControlForm.ShimmerDevice.WriteSamplingRate(samplingRate);
+            PControlForm.ShimmerDevice.SetLowPowerMag(checkBoxLowPowerMag.Checked);
+            PControlForm.ShimmerDevice.SetLowPowerAccel(checkBoxLowPowerAccel.Checked);
+            PControlForm.ShimmerDevice.SetLowPowerGyro(checkBoxLowPowerGyro.Checked);
+            PControlForm.ShimmerDevice.Set3DOrientation(checkBox3DOrientation.Checked);
+            PControlForm.ShimmerDevice.SetGyroOnTheFlyCalibration(checkBoxGyroOnTheFly.Checked, 100, 1.2);
+            PControlForm.ShimmerDevice.WriteAccelRange(comboBoxAccelRange.SelectedIndex);
+            PControlForm.ShimmerDevice.WriteGSRRange(comboBoxGSRRange.SelectedIndex);
 
             if (checkBoxComma.Checked)
             {
@@ -1501,133 +1503,133 @@ namespace ShimmerAPI
 
         private void EnableSensors()
         {
-            if (PControlForm.shimmer.GetShimmerVersion() == (int)Shimmer.ShimmerVersion.SHIMMER3)
+            if (PControlForm.ShimmerDevice.GetShimmerVersion() == (int)ShimmerBluetooth.ShimmerVersion.SHIMMER3)
             {
                 if (checkBoxSensor1.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_A_ACCEL;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_A_ACCEL;
                 }
                 if (checkBoxSensor2.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_D_ACCEL;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_D_ACCEL;
                 }
                 if (checkBoxSensor3.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_MPU9150_GYRO;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_MPU9150_GYRO;
                 }
                 if (checkBoxSensor4.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_LSM303DLHC_MAG;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_LSM303DLHC_MAG;
                 }
                 if (checkBoxSensor5.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_VBATT;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_VBATT;
                 }
                 if (checkBoxSensor6.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXT_A7;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXT_A7;
                 }
                 if (checkBoxSensor7.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXT_A6;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXT_A6;
                 }
                 if (checkBoxSensor8.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXT_A15;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXT_A15;
                 }
                 if (checkBoxSensor9.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A1;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A1;
                 }
                 if (checkBoxSensor10.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A12;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A12;
                 }
                 if (checkBoxSensor11.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A13;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A13;
                 }
                 if (checkBoxSensor12.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_INT_A14;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_INT_A14;
                 }
                 if (checkBoxSensor13.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_BMP180_PRESSURE;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_BMP180_PRESSURE;
                 }
                 if (checkBoxSensor14.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_GSR;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_GSR;
                 }
                 if (checkBoxSensor15.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG1_24BIT;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG1_24BIT;
                 }
                 if (checkBoxSensor16.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG2_24BIT;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG2_24BIT;
                 }
                 if (checkBoxSensor17.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG1_16BIT;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG1_16BIT;
                 }
                 if (checkBoxSensor18.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_EXG2_16BIT;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_EXG2_16BIT;
                 }
                 if (checkBoxSensor19.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_STRAIN;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_BMP180_PRESSURE;
                 }
             }
             else
             {
                 if (checkBoxSensor1.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_ACCEL;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_ACCEL;
                 }
                 if (checkBoxSensor2.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_GYRO;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_GYRO;
                 }
                 if (checkBoxSensor3.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_MAG;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_MAG;
                 }
                 if (checkBoxSensor4.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer3.SENSOR_VBATT;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer3.SENSOR_VBATT;
                 }
                 if (checkBoxSensor5.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_ECG;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_ECG;
                 }
                 if (checkBoxSensor6.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_EMG;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_EMG;
                 }
                 if (checkBoxSensor7.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_GSR;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_GSR;
                 }
                 if (checkBoxSensor8.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A0;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A0;
                 }
                 if (checkBoxSensor9.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A7;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_EXP_BOARD_A7;
                 }
                 if (checkBoxSensor10.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_STRAIN_GAUGE;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_STRAIN_GAUGE;
                 }
                 if (checkBoxSensor11.Checked)
                 {
-                    ReturnEnabledSensors = ReturnEnabledSensors | (int)Shimmer.SensorBitmapShimmer2.SENSOR_HEART;
+                    ReturnEnabledSensors = ReturnEnabledSensors | (int)ShimmerBluetooth.SensorBitmapShimmer2.SENSOR_HEART;
                 }
             }
-            PControlForm.shimmer.WriteSensors(ReturnEnabledSensors);
+            PControlForm.ShimmerDevice.WriteSensors(ReturnEnabledSensors);
             ReturnEnabledSensors = 0;
         }
 

@@ -59,17 +59,17 @@ namespace ShimmerAPI
             bool param_changed = false;
             bool trial_changed = false;
             //PConfiguration.PControlForm.shimmer
-            if (PConfiguration.PControlForm.ShimmerDevice.GetState() == Shimmer.SHIMMER_STATE_STREAMING)
+            if (PConfiguration.PControlForm.ShimmerDevice.GetState() == ShimmerBluetooth.SHIMMER_STATE_STREAMING)
             {
                 MessageBox.Show("Cannot change configure settings while streaming data. ", Control.ApplicationName,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else if (PConfiguration.PControlForm.ShimmerDevice.GetState() == Shimmer.SHIMMER_STATE_CONNECTING)
+            else if (PConfiguration.PControlForm.ShimmerDevice.GetState() == ShimmerBluetooth.SHIMMER_STATE_CONNECTING)
             {
                 MessageBox.Show("Cannot change configure settings while building configuration ", Control.ApplicationName,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else if (PConfiguration.PControlForm.ShimmerDevice.GetState() == Shimmer.SHIMMER_STATE_NONE)
+            else if (PConfiguration.PControlForm.ShimmerDevice.GetState() == ShimmerBluetooth.SHIMMER_STATE_NONE)
             {
                 MessageBox.Show("Please connect to a shimmer before configuration.", Control.ApplicationName,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -79,7 +79,7 @@ namespace ShimmerAPI
                 if (chBxIAmMaster.Checked != PConfiguration.PControlForm.ShimmerDevice.GetIAmMaster())
                 {
                     PConfiguration.PControlForm.ShimmerDevice.SetIAmMaster(chBxIAmMaster.Checked);
-                    //PConfiguration.PControlForm.shimmer.changeTrial = true;
+                    //PConfiguration.PControlForm.ShimmerBluetooth.changeTrial = true;
                     trial_changed = true;
                 }
                 if (txtBxCenter.Text != PConfiguration.PControlForm.ShimmerDevice.GetCenter())
@@ -328,7 +328,7 @@ namespace ShimmerAPI
         {
             try
             {
-                if (PConfiguration.PControlForm.ShimmerDevice.GetState() == Shimmer.SHIMMER_STATE_STREAMING)
+                if (PConfiguration.PControlForm.ShimmerDevice.GetState() == ShimmerBluetooth.SHIMMER_STATE_STREAMING)
                     buttonApplySd.Enabled = false;
                 else
                     buttonApplySd.Enabled = true;
