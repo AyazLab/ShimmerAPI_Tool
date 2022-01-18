@@ -89,20 +89,34 @@ namespace ShimmerAPI
                 PCsvFile.Write(deviceId);
             //}
             PCsvFile.WriteLine();
+
+            PCsvFile.Write("SystemTime" + Delimeter);
+            PCsvFile.Write("ElapsedTime" + Delimeter);
+
             for (int i = 0; i < data.Count; i++)
             {
                 PCsvFile.Write(names[i] + Delimeter);
             }
+            PCsvFile.Write("Markers" + Delimeter);
             PCsvFile.WriteLine();
+
+            PCsvFile.Write("SystemTime" + Delimeter);
+            PCsvFile.Write("ElapsedTime" + Delimeter);
             for (int i = 0; i < data.Count; i++)
             {
                 PCsvFile.Write(formats[i] + Delimeter);
             }
+            PCsvFile.Write("NA" + Delimeter);
+
             PCsvFile.WriteLine();
+
+            PCsvFile.Write("DateTime" + Delimeter);
+            PCsvFile.Write("ms" + Delimeter);
             for (int i = 0; i < data.Count; i++)
             {
                 PCsvFile.Write(units[i] + Delimeter);
             }
+            PCsvFile.Write("NA" + Delimeter);
             PCsvFile.WriteLine();
         }
 
