@@ -199,17 +199,12 @@ namespace ShimmerAPI
             tsStatusLabel.Text = "";
 
 
-            buttonReload_Click(sender, null);
+            int numPorts=getNumPorts();
             ComPort = comboBoxComPorts.Text;
+
             // btsd changes1
-            ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", ComPort);
-            ShimmerDevice.UICallback += this.HandleEvent;
+            
             buttonReload.Enabled = true;
-            String[] names = SerialPort.GetPortNames();
-            foreach (String s in names)
-            {
-                comboBoxComPorts.Items.Add(s);
-            }
             comboBoxComPorts.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBoxComPorts.AutoCompleteSource = AutoCompleteSource.ListItems;
 
@@ -262,7 +257,8 @@ namespace ShimmerAPI
             initializeExGLeadOff();
 
 
-            comboBoxComPorts.SelectedText = Properties.Settings.Default.COMport;
+            if(numPorts>0)
+                comboBoxComPorts.SelectedText = Properties.Settings.Default.COMport;
             textBoxSubj.Text = Properties.Settings.Default.Subject;
             textBox_udpPort.Text = Properties.Settings.Default.UDPport;
             checkBox91.Checked=Properties.Settings.Default.UDPenabled;
@@ -1278,19 +1274,25 @@ namespace ShimmerAPI
 
         public void Connect()
         {
-            //for Shimmer and ShimmerSDBT
-            ShimmerDevice.SetShimmerAddress(comboBoxComPorts.Text);
+            ComPort = comboBoxComPorts.Text;
+            if(!ComPort.Contains("No Valid")) { 
+                ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", ComPort);
+                ShimmerDevice.UICallback += this.HandleEvent;
 
-            //for Shimmer32Feet and ShimmerSDBT32Feet
-            //ShimmerBluetooth.SetAddress("00066666940E");
-            bool connect = true; // check to connect one at a time
+                //for Shimmer and ShimmerSDBT
+                ShimmerDevice.SetShimmerAddress(ComPort);
 
-            if (ShimmerDevice.GetState() != ShimmerBluetooth.SHIMMER_STATE_CONNECTED)
-            {
-                if (connect)
+                //for Shimmer32Feet and ShimmerSDBT32Feet
+                //ShimmerBluetooth.SetAddress("00066666940E");
+                bool connect = true; // check to connect one at a time
+
+                if (ShimmerDevice.GetState() != ShimmerBluetooth.SHIMMER_STATE_CONNECTED)
                 {
-                    ShimmerDevice.StartConnectThread();
-                    connect = false;
+                    if (connect)
+                    {
+                        ShimmerDevice.StartConnectThread();
+                        connect = false;
+                    }
                 }
             }
         }
@@ -1461,8 +1463,15 @@ namespace ShimmerAPI
                     string timestamp =  DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
 
                     string s = o.ToString() + " " + msgData.data.ToString();
-                    WriteToFile.WriteMarker(msgData.data[0]);
-                    statusStrip1.Text = ("Marker received: "+timestamp+" : "+s);
+                    if (WriteToFile != null)
+                    { 
+                        WriteToFile.WriteMarker(msgData.data[0]);
+                        statusStrip1.Text = ("Marker received: "+timestamp+" : "+s);
+                    }
+                    else
+                    {
+                        statusStrip1.Text = ("Marker log file not created!!");
+                    }
 
                 };
             
@@ -1487,7 +1496,8 @@ namespace ShimmerAPI
             buttonStop_Click1();
 
             SendKeys.Send("{F9}");
-            WriteToFile.WriteMarker(9);
+            if(WriteToFile!=null)
+                WriteToFile.WriteMarker(9);
             //timer1.Stop();
             textBoxSubj.Enabled = true;
 
@@ -2847,12 +2857,19 @@ namespace ShimmerAPI
 
         }
 
+        private int getNumPorts()
+        {
+            String[] names = SerialPort.GetPortNames();
+            return names.Length;
+        }
+
         private void buttonReload_Click(object sender, EventArgs e)
         {
             string curComPort = comboBoxComPorts.SelectedText;
             comboBoxComPorts.Items.Clear();
             String[] names = SerialPort.GetPortNames();
             int i = 0;
+            int numPorts = names.Length;
             bool COMfound = false;
             foreach (String s in names)
             {
@@ -2871,11 +2888,14 @@ namespace ShimmerAPI
                 comboBoxComPorts.SelectedIndex = i-1;
                 buttonConnect.Enabled = true;
             }
-            else if(i==0)
+            else if(i==0||numPorts==0)
             {
-                comboBoxComPorts.SelectedText = "No Valid Ports";
+                comboBoxComPorts.Items.Clear();
+                comboBoxComPorts.Text = "No Valid Ports";
                 buttonConnect.Enabled = false;
             }
+
+            
         }
 
         private void labelPRR_Click(object sender, EventArgs e)
