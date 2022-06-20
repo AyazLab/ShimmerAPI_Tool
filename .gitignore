@@ -6,6 +6,7 @@ stable/app.publish/*
 *.manifest
 *.cache
 *.application
+*/bin/*
 ShimmerCapture_source/bin/Debug/ShimmerCapture v0.6.exe
 ShimmerCapture_source/bin/Debug/ShimmerCapture v0.6.exe.config
 ShimmerCapture_source/bin/Debug/app.publish/ShimmerCapture v0.6.exe
