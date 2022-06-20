@@ -1,6 +1,7 @@
 ShimmerCapture_source/obj/*
 stable/app.publish/*
 .vs/*
+*/obj/*
 *.pdb
 *.manifest
 *.cache
