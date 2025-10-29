@@ -73,6 +73,7 @@
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bluetoothSetupHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDialog = new System.Windows.Forms.OpenFileDialog();
             this.checkBox25 = new System.Windows.Forms.CheckBox();
             this.checkBox26 = new System.Windows.Forms.CheckBox();
@@ -646,7 +647,8 @@
             this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripSplitButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.checkForUpdatesToolStripMenuItem,
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.bluetoothSetupHelpToolStripMenuItem});
             this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
             this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSplitButton1.Name = "toolStripSplitButton1";
@@ -661,12 +663,19 @@
             this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
-            // 
+            //
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(260, 34);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
+            //
+            // bluetoothSetupHelpToolStripMenuItem
+            //
+            this.bluetoothSetupHelpToolStripMenuItem.Name = "bluetoothSetupHelpToolStripMenuItem";
+            this.bluetoothSetupHelpToolStripMenuItem.Size = new System.Drawing.Size(260, 34);
+            this.bluetoothSetupHelpToolStripMenuItem.Text = "Bluetooth Setup Help";
+            this.bluetoothSetupHelpToolStripMenuItem.Click += new System.EventHandler(this.bluetoothSetupHelpToolStripMenuItem_Click);
+            //
             // openDialog
             // 
             this.openDialog.DefaultExt = "csv";
@@ -2073,6 +2082,7 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripSplitButton1;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bluetoothSetupHelpToolStripMenuItem;
         private System.Windows.Forms.Button buttonReadDirectory;
         private System.Windows.Forms.CheckBox checkBoxTSACheck;
         private System.Windows.Forms.ToolTip toolTip1;

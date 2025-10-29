@@ -756,6 +756,39 @@ namespace ShimmerAPI
             }
         }
 
+        private void bluetoothSetupHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string helpMessage = "═══════════════════════════════════════\n" +
+                                "   BLUETOOTH PAIRING INSTRUCTIONS\n" +
+                                "═══════════════════════════════════════\n\n" +
+                                "🔑 SHIMMER PAIRING PIN: 1234\n" +
+                                "   (You will need this when pairing)\n\n" +
+                                "───────────────────────────────────────\n\n" +
+                                "If you see \"No Valid Ports\", follow these steps:\n\n" +
+                                "1. Turn ON your Shimmer v3 device\n" +
+                                "   • Blue LED should blink when powered on\n\n" +
+                                "2. Open Windows Settings\n" +
+                                "   • Press Win+I or go to Start → Settings\n\n" +
+                                "3. Go to: Devices → Bluetooth & other devices\n\n" +
+                                "4. Click \"Add Bluetooth or other device\"\n\n" +
+                                "5. Select \"Bluetooth\"\n\n" +
+                                "6. Wait for your Shimmer to appear\n" +
+                                "   • It will show as \"Shimmer3-XXXX\" or similar\n\n" +
+                                "7. Click on your Shimmer device to pair\n\n" +
+                                "8. ⚠️ ENTER THE PIN: 1234 when prompted\n\n" +
+                                "9. Wait for \"Connected\" status\n\n" +
+                                "10. Windows will assign a COM port automatically\n\n" +
+                                "11. Return to ShimmerCapture and click RELOAD\n\n" +
+                                "───────────────────────────────────────\n\n" +
+                                "✓ Your device should now appear in the COM port dropdown!\n\n" +
+                                "Still having issues?\n" +
+                                "• Check error logs: Tools → Open Log Folder\n" +
+                                "• Make sure device is powered on\n" +
+                                "• Try removing and re-pairing the device";
+
+            MessageBox.Show(helpMessage, "Bluetooth Setup Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
         public void SetupCheckboxesGroup1(string shimmerId, string[] namesRaw, string[] namesCal)
         {
             if (InvokeRequired)

@@ -45,13 +45,38 @@ New menu items in Tools menu:
 
 ## Getting Started
 
-1. Connect your Shimmer v3 device via Bluetooth or USB
-2. Launch ShimmerCapture
-3. Select your device from the COM port dropdown
-4. Configure your sensors in the Configuration menu
-5. Enter a subject name
-6. Click **Start** - CSV logging begins automatically!
-7. Click **Stop** when done - file automatically closes
+### First Time Setup: Pairing Your Shimmer Device
+
+> 💡 **Quick Help**: In the app, go to **Help → Bluetooth Setup Help** for step-by-step instructions!
+
+> 🔑 **IMPORTANT**: The Shimmer Bluetooth pairing PIN is **1234** (you'll need this during pairing)
+
+**For Bluetooth Connection:**
+1. Turn on your Shimmer v3 device (blue LED should blink)
+2. Open Windows **Settings** → **Devices** → **Bluetooth & other devices**
+3. Click **"Add Bluetooth or other device"** → **Bluetooth**
+4. Wait for your Shimmer device to appear (e.g., "Shimmer3-XXXX")
+5. Click on your Shimmer device to pair
+6. **Enter the pairing PIN: 1234** when prompted
+7. Wait for "Connected" status
+8. Windows will automatically assign a COM port (e.g., COM5)
+9. Return to ShimmerCapture and click the **Reload** button
+
+**For USB/Serial Connection:**
+- Simply plug in the USB-to-serial adapter
+- Windows will automatically detect the COM port
+
+### Using the Application
+
+1. Launch ShimmerCapture
+2. Click the **Reload** button to refresh COM ports
+3. Select your Shimmer device from the COM port dropdown
+   - If you see **"No Valid Ports"**: Your device isn't paired or connected yet (see setup above)
+4. Click **Connect** - wait for connection confirmation
+5. Configure your sensors in the Configuration menu if needed
+6. Enter a subject name
+7. Click **Start** - CSV logging begins automatically!
+8. Click **Stop** when done - file automatically closes
 
 Your data is saved to: `Documents\Shimmer_GSR\SubjectName_TIMESTAMP.csv`
 
@@ -101,9 +126,29 @@ python udp_to_key.py
 - Includes timestamps, stack traces, and memory usage info
 
 ### Common Issues
-- **Port access denied**: Close other applications using the COM port
-- **Device not found**: Check Bluetooth pairing and COM port assignment
-- **CSV not saving**: Check `Documents\Shimmer_GSR\` folder permissions
+
+**"No Valid Ports" appearing:**
+- Your Shimmer device is not paired with Windows
+- Go to Help → Bluetooth Setup Help in the app for instructions
+- Remember: **Pairing PIN is 1234**
+- After pairing, click the **Reload** button in ShimmerCapture
+
+**Port access denied:**
+- Close other applications using the COM port
+- Unpair and re-pair the device if the issue persists
+
+**Device not found:**
+- Check Bluetooth pairing and COM port assignment
+- Make sure the Shimmer device is powered on (blue LED blinking)
+- Try removing the device from Windows and pairing again
+
+**Cannot pair - PIN rejected:**
+- The correct PIN is **1234** (not 0000 or other common PINs)
+- Make sure you're entering exactly: 1-2-3-4
+
+**CSV not saving:**
+- Check `Documents\Shimmer_GSR\` folder permissions
+- Make sure you have write access to your Documents folder
 
 ## File Structure
 
