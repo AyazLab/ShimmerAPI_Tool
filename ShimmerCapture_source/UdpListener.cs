@@ -6,7 +6,7 @@ using System;
 using ShimmerAPI;
 using ShimmerLibrary;
 
-class UDPListener
+class UDPListener : IDisposable
 {
     private int m_portToListen = 5501;
     private volatile bool listening;
@@ -15,7 +15,8 @@ class UDPListener
 
     private UdpClient listener = null;
 
-    private Logging writeToFile=null;
+    private Logging writeToFile = null;
+    private bool disposed = false;
 
     //constructor
     public UDPListener()
@@ -40,6 +41,7 @@ class UDPListener
     {
         if (!this.listening)
         {
+            ErrorLogger.LogInfo($"Starting UDP listener on port {m_portToListen}", "UDPListener.StartListener");
             m_ListeningThread = new Thread(ListenForUDPPackages);
             m_ListeningThread.IsBackground = true;
             this.listening = true;
@@ -49,53 +51,152 @@ class UDPListener
 
     public void StopListener()
     {
+        ErrorLogger.LogInfo($"Stopping UDP listener on port {m_portToListen}", "UDPListener.StopListener");
         this.listening = false;
-        if(listener!=null)
-            listener.Close();   // forcibly end communication
-                            // 
-    }
-
-    public void ListenForUDPPackages()
-{
-        listener = null;
-    
-    try
-    {
-        listener = new UdpClient(m_portToListen);
-    }
-    catch (SocketException)
-    {
-        //do nothing
-    }
-
-    if (listener != null)
-    {
-        IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, m_portToListen);
 
         try
         {
-            while (this.listening)
+            if (listener != null)
             {
-                Console.WriteLine("Waiting for UDP broadcast to port " + m_portToListen);
-                byte[] bytes = listener.Receive(ref groupEP);
+                listener.Close();   // forcibly end communication
+            }
 
-                if(writeToFile!=null)
-                    writeToFile.WriteMarker(bytes[0]);
-                //raise event                        
-                NewMessageReceived(this, new MyMessageArgs(bytes));
+            // Wait for thread to finish (up to 2 seconds)
+            if (m_ListeningThread != null && m_ListeningThread.IsAlive)
+            {
+                if (!m_ListeningThread.Join(2000))
+                {
+                    ErrorLogger.LogWarning($"UDP listener thread did not terminate in time for port {m_portToListen}", "UDPListener.StopListener");
+                }
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e.ToString());
-        }
-        finally
-        {
-            listener.Close();
-            Console.WriteLine("Done listening for UDP broadcast");
+            ErrorLogger.LogError($"Error stopping UDP listener on port {m_portToListen}", ex, "UDPListener.StopListener");
         }
     }
-}
+
+    public void ListenForUDPPackages()
+    {
+        listener = null;
+
+        try
+        {
+            listener = new UdpClient(m_portToListen);
+            ErrorLogger.LogInfo($"UDP client created for port {m_portToListen}", "UDPListener.ListenForUDPPackages");
+        }
+        catch (SocketException ex)
+        {
+            ErrorLogger.LogError($"Failed to create UDP client on port {m_portToListen} - port may be in use", ex, "UDPListener.ListenForUDPPackages");
+            return;
+        }
+
+        if (listener != null)
+        {
+            IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, m_portToListen);
+
+            try
+            {
+                while (this.listening)
+                {
+                    Console.WriteLine("Waiting for UDP broadcast to port " + m_portToListen);
+                    byte[] bytes = listener.Receive(ref groupEP);
+
+                    if (writeToFile != null)
+                    {
+                        try
+                        {
+                            writeToFile.WriteMarker(bytes[0]);
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error writing marker to file", ex, "UDPListener.ListenForUDPPackages");
+                        }
+                    }
+
+                    // Raise event - check if there are subscribers first
+                    if (NewMessageReceived != null)
+                    {
+                        try
+                        {
+                            NewMessageReceived(this, new MyMessageArgs(bytes));
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error in UDP message event handler", ex, "UDPListener.ListenForUDPPackages");
+                        }
+                    }
+                }
+            }
+            catch (SocketException ex)
+            {
+                if (this.listening)
+                {
+                    // Only log if we're still supposed to be listening (not a deliberate stop)
+                    ErrorLogger.LogWarning($"Socket error while listening on port {m_portToListen}: {ex.Message}", "UDPListener.ListenForUDPPackages");
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError($"Unexpected error in UDP listener on port {m_portToListen}", ex, "UDPListener.ListenForUDPPackages");
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                try
+                {
+                    if (listener != null)
+                    {
+                        listener.Close();
+                        listener.Dispose();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogWarning($"Error disposing UDP client: {ex.Message}", "UDPListener.ListenForUDPPackages");
+                }
+                ErrorLogger.LogInfo($"UDP listener stopped for port {m_portToListen}", "UDPListener.ListenForUDPPackages");
+                Console.WriteLine("Done listening for UDP broadcast");
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed)
+            return;
+
+        if (disposing)
+        {
+            try
+            {
+                StopListener();
+
+                if (listener != null)
+                {
+                    listener.Dispose();
+                    listener = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Error disposing UDPListener", ex, "UDPListener.Dispose");
+            }
+        }
+
+        disposed = true;
+    }
+
+    ~UDPListener()
+    {
+        Dispose(false);
+    }
 }
 
 public class MyMessageArgs : EventArgs

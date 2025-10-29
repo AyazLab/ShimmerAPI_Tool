@@ -868,8 +868,10 @@ namespace ShimmerAPI
 
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogError($"Connection failed for device {GetDeviceName()}", ex, "ShimmerBluetooth.Connect");
+
                     if (TimerConnect != null)
                     {
                         TimerConnect.Stop(); // Enable it
@@ -880,7 +882,7 @@ namespace ShimmerAPI
                     EventHandler handler = UICallback;
                     if (handler != null)
                     {
-                        String message = "Unable to connect to specified port";
+                        String message = "Unable to connect to specified port: " + ex.Message;
                         CustomEventArgs newEventArgs = new CustomEventArgs((int)ShimmerIdentifier.MSG_IDENTIFIER_NOTIFICATION_MESSAGE, (object)message);
                         handler(this, newEventArgs);
                     }
@@ -1049,16 +1051,20 @@ namespace ShimmerAPI
 
         public void ReadData()
         {
-            List<byte> buffer = new List<byte>();
-            int i;
-            byte[] bufferbyte;
-            List<byte> dataByte;
-            ObjectCluster objectCluster;
-            FlushInputConnection();
-            KeepObjectCluster = null;
-
-            while (!StopReading)
+            try
             {
+                ErrorLogger.LogInfo($"ReadData thread started for device {GetDeviceName()}", "ShimmerBluetooth.ReadData");
+
+                List<byte> buffer = new List<byte>();
+                int i;
+                byte[] bufferbyte;
+                List<byte> dataByte;
+                ObjectCluster objectCluster;
+                FlushInputConnection();
+                KeepObjectCluster = null;
+
+                while (!StopReading)
+                {
                 try
                 {
                     byte b = (byte)ReadByte();
@@ -1581,21 +1587,58 @@ namespace ShimmerAPI
                     }
 
                 }
-                catch (System.InvalidOperationException)
+                catch (System.InvalidOperationException ex)
                 {
+                    ErrorLogger.LogWarning($"Invalid operation during read for device {GetDeviceName()}: {ex.Message}", "ShimmerBluetooth.ReadThread");
                     CustomEventArgs newEventArgs = new CustomEventArgs((int)ShimmerIdentifier.MSG_IDENTIFIER_NOTIFICATION_MESSAGE, "Connection lost");
                     OnNewEvent(newEventArgs);
                     Disconnect();
                 }
-                catch (System.IO.IOException)
+                catch (System.IO.IOException ex)
                 {
+                    ErrorLogger.LogWarning($"I/O error during read for device {GetDeviceName()} - connection may be lost: {ex.Message}", "ShimmerBluetooth.ReadThread");
+                    CustomEventArgs newEventArgs = new CustomEventArgs((int)ShimmerIdentifier.MSG_IDENTIFIER_NOTIFICATION_MESSAGE, "Connection lost - I/O error");
+                    OnNewEvent(newEventArgs);
+                    Disconnect();
+                }
 
                 }
 
+                // only stop reading when disconnecting, so disconnect serial port here too
+                CloseConnection();
+                ErrorLogger.LogInfo($"ReadData thread ending normally for device {GetDeviceName()}", "ShimmerBluetooth.ReadData");
             }
+            catch (ThreadAbortException)
+            {
+                ErrorLogger.LogWarning($"ReadData thread aborted for device {GetDeviceName()}", "ShimmerBluetooth.ReadData");
+                // Thread is being terminated - don't try to clean up
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError($"Unhandled exception in ReadData thread for device {GetDeviceName()} - this may cause a crash", ex, "ShimmerBluetooth.ReadData");
 
-            // only stop reading when disconnecting, so disconnect serial port here too
-            CloseConnection();
+                // Notify UI of unexpected error
+                try
+                {
+                    CustomEventArgs newEventArgs = new CustomEventArgs((int)ShimmerIdentifier.MSG_IDENTIFIER_NOTIFICATION_MESSAGE,
+                        "Unexpected error in data reading thread: " + ex.Message);
+                    OnNewEvent(newEventArgs);
+                }
+                catch
+                {
+                    // Last resort - can't even notify UI
+                }
+
+                // Try to disconnect gracefully
+                try
+                {
+                    Disconnect();
+                }
+                catch
+                {
+                    // Already in error state, ignore disconnect errors
+                }
+            }
 
         }
         public virtual void SDBT_switch(byte b)
@@ -1615,51 +1658,82 @@ namespace ShimmerAPI
 
         public void Disconnect()
         {
+            ErrorLogger.LogInfo($"Disconnecting device {GetDeviceName()}", "ShimmerBluetooth.Disconnect");
+
+            // Signal threads to stop
+            StopReading = true;
+
             try
             {
-                if (ReadThread != null)
+                if (ReadThread != null && ReadThread.IsAlive)
                 {
-                    //ReadThread.Abort();
+                    // Thread.Abort() is deprecated - use StopReading flag instead
+                    // Give thread time to finish (wait up to 2 seconds)
+                    if (!ReadThread.Join(2000))
+                    {
+                        ErrorLogger.LogWarning($"ReadThread did not terminate in time for device {GetDeviceName()}", "ShimmerBluetooth.Disconnect");
+                    }
+                    ReadThread = null;
                 }
-                if (ConnectThread != null)
+                if (ConnectThread != null && ConnectThread.IsAlive)
                 {
-                    //ConnectThread.Abort();
+                    // Give thread time to finish (wait up to 2 seconds)
+                    if (!ConnectThread.Join(2000))
+                    {
+                        ErrorLogger.LogWarning($"ConnectThread did not terminate in time for device {GetDeviceName()}", "ShimmerBluetooth.Disconnect");
+                    }
+                    ConnectThread = null;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                ErrorLogger.LogError($"Error waiting for threads to terminate for device {GetDeviceName()}", ex, "ShimmerBluetooth.Disconnect");
             }
+
             if (IsConnectionOpen() == true)
             {
                 if (GetState() == ShimmerBluetooth.SHIMMER_STATE_STREAMING)
                 {
                     if (GetFirmwareIdentifier() == FW_IDENTIFIER_LOGANDSTREAM)
                     {
-
+                        // Log and stream firmware - no action needed
                     }
                     else
                     {
                         //StopStreaming();
                     }
-
                 }
-                FlushConnection();
+
+                try
+                {
+                    FlushConnection();
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogWarning($"Error flushing connection for device {GetDeviceName()}: {ex.Message}", "ShimmerBluetooth.Disconnect");
+                }
 
                 try
                 {
                     CloseConnection();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogError($"Error closing connection for device {GetDeviceName()}", ex, "ShimmerBluetooth.Disconnect");
                 }
             }
-            else
-            {
 
+            try
+            {
+                ObjectClusterBuffer.Clear();
             }
-            ObjectClusterBuffer.Clear();
-            StopReading = true;
+            catch (Exception ex)
+            {
+                ErrorLogger.LogWarning($"Error clearing buffer for device {GetDeviceName()}: {ex.Message}", "ShimmerBluetooth.Disconnect");
+            }
+
             SetState(SHIMMER_STATE_NONE);
+            ErrorLogger.LogInfo($"Disconnect completed for device {GetDeviceName()}", "ShimmerBluetooth.Disconnect");
         }
 
         protected void InitializeShimmer2()

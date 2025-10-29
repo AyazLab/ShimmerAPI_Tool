@@ -47,10 +47,11 @@ using System.Threading;
 namespace ShimmerAPI
 {
     [System.Obsolete] //Moving the serial port controls to the highest implementing class so code is more concise and extendible for use with 32 feet/xamarin/etc
-    public abstract class Shimmer : ShimmerBluetooth
+    public abstract class Shimmer : ShimmerBluetooth, IDisposable
     {
         protected String ComPort;
         public System.IO.Ports.SerialPort SerialPort = new System.IO.Ports.SerialPort();
+        private bool disposed = false;
 
         public Shimmer(String devID, String bComPort)
             : base(devID)
@@ -91,10 +92,12 @@ namespace ShimmerAPI
                 SerialPort.ReadExisting();
                 SerialPort.DiscardInBuffer();
             }
-            catch
+            catch (Exception ex)
             {
+                ErrorLogger.LogWarning($"Error flushing serial port input for {ComPort}: {ex.Message}", "Shimmer.FlushInputConnection");
+                // Continue - non-critical error
             }
-            
+
         }
         protected override void WriteBytes(byte[] b, int index, int length)
         {
@@ -111,20 +114,38 @@ namespace ShimmerAPI
         }
         protected override void OpenConnection()
         {
+            try
+            {
                 SerialPort.BaudRate = 115200;
                 SerialPort.PortName = ComPort;
                 SerialPort.ReadTimeout = this.ReadTimeout;
                 SerialPort.WriteTimeout = this.WriteTimeout;
                 SetState(SHIMMER_STATE_CONNECTING);
-                try
-                {
-                    SerialPort.Open();
-                }
-                catch
-                {
-                }
+
+                SerialPort.Open();
+                ErrorLogger.LogInfo($"Serial port opened: {ComPort}", "Shimmer.OpenConnection");
+
                 SerialPort.DiscardInBuffer();
                 SerialPort.DiscardOutBuffer();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ErrorLogger.LogError($"Port {ComPort} access denied - may be in use by another application", ex, "Shimmer.OpenConnection");
+                SetState(SHIMMER_STATE_NONE);
+                throw;
+            }
+            catch (System.IO.IOException ex)
+            {
+                ErrorLogger.LogError($"I/O error opening port {ComPort} - device may be disconnected", ex, "Shimmer.OpenConnection");
+                SetState(SHIMMER_STATE_NONE);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError($"Failed to open serial port {ComPort}", ex, "Shimmer.OpenConnection");
+                SetState(SHIMMER_STATE_NONE);
+                throw;
+            }
         }
         public String GetComPort()
         {
@@ -133,6 +154,45 @@ namespace ShimmerAPI
         public void SetComPort(String comPort)
         {
             ComPort = comPort;
+        }
+
+        public new void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                try
+                {
+                    if (SerialPort != null)
+                    {
+                        if (SerialPort.IsOpen)
+                        {
+                            SerialPort.Close();
+                        }
+                        SerialPort.Dispose();
+                        ErrorLogger.LogInfo($"Serial port disposed: {ComPort}", "Shimmer.Dispose");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error disposing serial port", ex, "Shimmer.Dispose");
+                }
+            }
+
+            disposed = true;
+        }
+
+        ~Shimmer()
+        {
+            Dispose(false);
         }
 
     }

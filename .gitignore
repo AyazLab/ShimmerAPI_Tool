@@ -18,3 +18,4 @@ stable/ShimmerCapture v0.6.exe.config
 ShimmerCapture_source/bin/Debug/ShimmerCapture.exe.config
 ShimmerCapture_source/bin/Release/ShimmerCapture.exe.config
 stable/ShimmerCapture.exe.config
+*.md

@@ -68,6 +68,8 @@
             this.configureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItemSaveToCSV = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItemShow3DOrientation = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemOpenDataFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemOpenLogFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -593,7 +595,9 @@
             this.toolStripItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.configureToolStripMenuItem,
             this.ToolStripMenuItemSaveToCSV,
-            this.ToolStripMenuItemShow3DOrientation});
+            this.ToolStripMenuItemShow3DOrientation,
+            this.ToolStripMenuItemOpenDataFolder,
+            this.ToolStripMenuItemOpenLogFolder});
             this.toolStripItemTools.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemTools.Image")));
             this.toolStripItemTools.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemTools.Name = "toolStripItemTools";
@@ -609,10 +613,10 @@
             this.configureToolStripMenuItem.Click += new System.EventHandler(this.configureToolStripMenuItem_Click);
             // 
             // ToolStripMenuItemSaveToCSV
-            // 
+            //
             this.ToolStripMenuItemSaveToCSV.Name = "ToolStripMenuItemSaveToCSV";
             this.ToolStripMenuItemSaveToCSV.Size = new System.Drawing.Size(280, 34);
-            this.ToolStripMenuItemSaveToCSV.Text = "Save To CSV";
+            this.ToolStripMenuItemSaveToCSV.Text = "CSV Auto-Save Info";
             this.ToolStripMenuItemSaveToCSV.Click += new System.EventHandler(this.ToolStripMenuItemSaveToCSV_Click);
             // 
             // ToolStripMenuItemShow3DOrientation
@@ -622,7 +626,21 @@
             this.ToolStripMenuItemShow3DOrientation.Size = new System.Drawing.Size(280, 34);
             this.ToolStripMenuItemShow3DOrientation.Text = "Show 3D Orientation";
             this.ToolStripMenuItemShow3DOrientation.Click += new System.EventHandler(this.ToolStripMenuItemShow3DOrientation_Click);
-            // 
+            //
+            // ToolStripMenuItemOpenDataFolder
+            //
+            this.ToolStripMenuItemOpenDataFolder.Name = "ToolStripMenuItemOpenDataFolder";
+            this.ToolStripMenuItemOpenDataFolder.Size = new System.Drawing.Size(280, 34);
+            this.ToolStripMenuItemOpenDataFolder.Text = "Open Data Folder";
+            this.ToolStripMenuItemOpenDataFolder.Click += new System.EventHandler(this.ToolStripMenuItemOpenDataFolder_Click);
+            //
+            // ToolStripMenuItemOpenLogFolder
+            //
+            this.ToolStripMenuItemOpenLogFolder.Name = "ToolStripMenuItemOpenLogFolder";
+            this.ToolStripMenuItemOpenLogFolder.Size = new System.Drawing.Size(280, 34);
+            this.ToolStripMenuItemOpenLogFolder.Text = "Open Log Folder";
+            this.ToolStripMenuItemOpenLogFolder.Click += new System.EventHandler(this.ToolStripMenuItemOpenLogFolder_Click);
+            //
             // toolStripSplitButton1
             // 
             this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -1969,6 +1987,8 @@
         private System.Windows.Forms.CheckBox checkBox29;
         private System.Windows.Forms.CheckBox checkBox30;
         public System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemShow3DOrientation;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemOpenDataFolder;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemOpenLogFolder;
         private System.Windows.Forms.CheckBox checkBox31;
         private System.Windows.Forms.CheckBox checkBox32;
         private System.Windows.Forms.CheckBox checkBox33;

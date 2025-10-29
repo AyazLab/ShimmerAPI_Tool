@@ -14,5 +14,14 @@
     <Setting Name="UDPenabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="ManualMarkerIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="ManualMarkerPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">5501</Value>
+    </Setting>
+    <Setting Name="ManualMarkerValue" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

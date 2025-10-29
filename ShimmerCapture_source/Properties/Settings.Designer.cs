@@ -70,5 +70,41 @@ namespace ShimmerAPI.Properties {
                 this["UDPenabled"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string ManualMarkerIP {
+            get {
+                return ((string)(this["ManualMarkerIP"]));
+            }
+            set {
+                this["ManualMarkerIP"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5501")]
+        public string ManualMarkerPort {
+            get {
+                return ((string)(this["ManualMarkerPort"]));
+            }
+            set {
+                this["ManualMarkerPort"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public string ManualMarkerValue {
+            get {
+                return ((string)(this["ManualMarkerValue"]));
+            }
+            set {
+                this["ManualMarkerValue"] = value;
+            }
+        }
     }
 }

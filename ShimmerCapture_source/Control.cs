@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using System.IO.Ports;
+using System.Net.Sockets;
+using System.Diagnostics;
 using ZedGraph;
 using ShimmerAPI;
 using ShimmerLibrary;
@@ -76,6 +78,15 @@ namespace ShimmerAPI
         private System.IO.Ports.SerialPort SerialPort = new SerialPort();
         private string ComPort;
         public ShimmerLogAndStreamSystemSerialPort ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", "");
+
+        // Manual UDP Marker Controls
+        private GroupBox groupBoxManualMarker;
+        private TextBox textBoxMarkerIP;
+        private TextBox textBoxMarkerPort;
+        private Button buttonSendMarker;
+        private System.Windows.Forms.Label labelMarkerIP;
+        private System.Windows.Forms.Label labelMarkerPort;
+
         //Plot
         private ZedGraph.ZedGraphControl ZedGraphControl2 = new ZedGraph.ZedGraphControl(); //These need to be defined here for Linux. Otherwise can't later be added
         private ZedGraph.ZedGraphControl ZedGraphControl3 = new ZedGraph.ZedGraphControl();
@@ -379,6 +390,11 @@ namespace ShimmerAPI
             MyPaneGraph3.Legend.Position = LegendPos.Float;
             MyPaneGraph3.Legend.Location = new Location(0f, 0f, CoordType.ChartFraction, AlignH.Left, AlignV.Top);
             MyPaneGraph3.YAxis.MajorGrid.IsZeroLine = false;
+
+            // Initialize Manual Marker UI
+            InitializeManualMarkerControls();
+            // Load saved settings
+            LoadManualMarkerSettings();
         }
 
         private void FormResize(object sender, EventArgs e)
@@ -638,19 +654,35 @@ namespace ShimmerAPI
 
         private void ToolStripMenuItemSaveToCSV_Click(object sender, EventArgs e)
         {
-            if (ToolStripMenuItemSaveToCSV.Checked)
+            // CSV files are now auto-saved when recording starts
+            // This menu item just shows information about the save location
+            try
             {
-                ToolStripMenuItemSaveToCSV.Checked = false;
-                WriteToFile.CloseFile();
-            }
-            else
-            {
-                openDialog.CheckFileExists = false;
-                if (openDialog.ShowDialog() == DialogResult.OK)
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var dataFolder = Path.Combine(path, "Shimmer_GSR");
+
+                string message;
+                if (WriteToFile != null && ToolStripMenuItemSaveToCSV.Checked)
                 {
-                    WriteToFile = new Logging(openDialog.FileName, Delimeter);
-                    ToolStripMenuItemSaveToCSV.Checked = true;
+                    message = "CSV logging is currently active.\n\n" +
+                             "Files are automatically saved when recording starts.\n\n" +
+                             $"Save location:\n{dataFolder}\n\n" +
+                             "Click 'Open Data Folder' in the Tools menu to view saved files.";
                 }
+                else
+                {
+                    message = "CSV logging will start automatically when you begin recording.\n\n" +
+                             $"Files will be saved to:\n{dataFolder}\n\n" +
+                             "Filename format: SubjectName_yyyyMMdd_HHmmss.csv\n\n" +
+                             "Click 'Open Data Folder' in the Tools menu to view the save location.";
+                }
+
+                MessageBox.Show(message, "CSV Auto-Save Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Error showing CSV save information", ex, "Control.ToolStripMenuItemSaveToCSV_Click");
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -667,8 +699,60 @@ namespace ShimmerAPI
             else
             {
                 ToolStripMenuItemShow3DOrientation.Checked = false;
-                Orientation3DForm.Close();
+                if (Orientation3DForm != null)
+                {
+                    try
+                    {
+                        Orientation3DForm.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.LogError("Error closing 3D Orientation form", ex, "Control.ToolStripMenuItemShow3DOrientation_Click");
+                    }
+                }
                 Is3DCubeOpen = false;
+            }
+        }
+
+        private void ToolStripMenuItemOpenDataFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var dataFolder = Path.Combine(path, "Shimmer_GSR");
+
+                // Create directory if it doesn't exist
+                if (!Directory.Exists(dataFolder))
+                {
+                    Directory.CreateDirectory(dataFolder);
+                    ErrorLogger.LogInfo($"Created data folder: {dataFolder}", "Control.ToolStripMenuItemOpenDataFolder_Click");
+                }
+
+                // Open folder in Explorer
+                System.Diagnostics.Process.Start("explorer.exe", dataFolder);
+                ErrorLogger.LogInfo($"Opened data folder: {dataFolder}", "Control.ToolStripMenuItemOpenDataFolder_Click");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Error opening data folder", ex, "Control.ToolStripMenuItemOpenDataFolder_Click");
+                MessageBox.Show($"Error opening data folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ToolStripMenuItemOpenLogFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string logFolder = Path.GetTempPath();
+
+                // Open folder in Explorer
+                System.Diagnostics.Process.Start("explorer.exe", logFolder);
+                ErrorLogger.LogInfo($"Opened log folder: {logFolder}", "Control.ToolStripMenuItemOpenLogFolder_Click");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Error opening log folder", ex, "Control.ToolStripMenuItemOpenLogFolder_Click");
+                MessageBox.Show($"Error opening log folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1408,7 +1492,7 @@ namespace ShimmerAPI
             buttonStart_Click1();
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var subFolderPath = Path.Combine(path, "Shimmer_GSR\\");
+            var subFolderPath = Path.Combine(path, "Shimmer_GSR");
 
             //Create GSR directory in MyDocuments if it doesn't exist already
             if (!Directory.Exists(subFolderPath))
@@ -1416,11 +1500,21 @@ namespace ShimmerAPI
                 Directory.CreateDirectory(subFolderPath);
             }
 
-            string filename = subFolderPath + textBoxSubj.Text + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString("00") + DateTime.Now.Day.ToString("00") + "_" + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
+            // Generate filename with timestamp
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string filename = Path.Combine(subFolderPath, $"{textBoxSubj.Text}_{timestamp}.csv");
 
-
-            WriteToFile = new Logging(filename, ",");
-            ToolStripMenuItemSaveToCSV.Checked = true;
+            try
+            {
+                WriteToFile = new Logging(filename, ",");
+                ToolStripMenuItemSaveToCSV.Checked = true;
+                ErrorLogger.LogInfo($"Auto-started CSV logging: {filename}", "Control.buttonStart_Click");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError($"Failed to start CSV logging to {filename}", ex, "Control.buttonStart_Click");
+                MessageBox.Show($"Warning: Failed to start CSV logging.\n{ex.Message}", "CSV Logging Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             checkBox91.Enabled = false;
             textBox_udpPort.Enabled = false;
@@ -1454,6 +1548,16 @@ namespace ShimmerAPI
             Properties.Settings.Default.Save();
 
             ShimmerDevice.StartStreamingandLog();
+
+            // Auto-send marker 231 on recording start
+            try
+            {
+                SendUDPMarker(231, "Recording start");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogWarning($"Failed to auto-send marker 231 on recording start: {ex.Message}", "Control.buttonStart_Click1");
+            }
 
             if (udpMarkersEnabled)
             { 
@@ -1492,6 +1596,17 @@ namespace ShimmerAPI
             checkBox91.Enabled = true;
             textBox_udpPort.Enabled = true;
             ShimmerDevice.StopStreaming();
+
+            // Auto-send marker 232 on recording stop
+            try
+            {
+                SendUDPMarker(232, "Recording stop");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogWarning($"Failed to auto-send marker 232 on recording stop: {ex.Message}", "Control.Stop");
+            }
+
             udpListener.StopListener();
             buttonStop_Click1();
 
@@ -2997,6 +3112,159 @@ namespace ShimmerAPI
             textBox_udpPort.Enabled = udpMarkersEnabled;
 
         }
+
+        #region Manual Marker Functionality
+
+        private void InitializeManualMarkerControls()
+        {
+            // Create GroupBox
+            groupBoxManualMarker = new GroupBox();
+            groupBoxManualMarker.Text = "Manual Marker";
+            groupBoxManualMarker.Size = new Size(200, 120);
+            groupBoxManualMarker.Location = new Point(this.Width - 220, 60); // Top right corner
+
+            // Create IP Label and TextBox
+            labelMarkerIP = new System.Windows.Forms.Label();
+            labelMarkerIP.Text = "IP Address:";
+            labelMarkerIP.Location = new Point(10, 20);
+            labelMarkerIP.AutoSize = true;
+
+            textBoxMarkerIP = new TextBox();
+            textBoxMarkerIP.Location = new Point(10, 40);
+            textBoxMarkerIP.Size = new Size(180, 20);
+
+            // Create Port Label and TextBox
+            labelMarkerPort = new System.Windows.Forms.Label();
+            labelMarkerPort.Text = "Port:";
+            labelMarkerPort.Location = new Point(10, 65);
+            labelMarkerPort.AutoSize = true;
+
+            textBoxMarkerPort = new TextBox();
+            textBoxMarkerPort.Location = new Point(50, 63);
+            textBoxMarkerPort.Size = new Size(60, 20);
+
+            // Create Send Button
+            buttonSendMarker = new Button();
+            buttonSendMarker.Text = "Send Marker (230)";
+            buttonSendMarker.Location = new Point(10, 88);
+            buttonSendMarker.Size = new Size(180, 23);
+            buttonSendMarker.Click += ButtonSendMarker_Click;
+
+            // Add controls to GroupBox
+            groupBoxManualMarker.Controls.Add(labelMarkerIP);
+            groupBoxManualMarker.Controls.Add(textBoxMarkerIP);
+            groupBoxManualMarker.Controls.Add(labelMarkerPort);
+            groupBoxManualMarker.Controls.Add(textBoxMarkerPort);
+            groupBoxManualMarker.Controls.Add(buttonSendMarker);
+
+            // Add GroupBox to Form
+            this.Controls.Add(groupBoxManualMarker);
+            groupBoxManualMarker.BringToFront();
+        }
+
+        private void LoadManualMarkerSettings()
+        {
+            try
+            {
+                textBoxMarkerIP.Text = Properties.Settings.Default.ManualMarkerIP;
+                textBoxMarkerPort.Text = Properties.Settings.Default.ManualMarkerPort;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Error loading manual marker settings", ex, "Control.LoadManualMarkerSettings");
+                // Use defaults if loading fails
+                textBoxMarkerIP.Text = "127.0.0.1";
+                textBoxMarkerPort.Text = "5501";
+            }
+        }
+
+        private void SaveManualMarkerSettings()
+        {
+            try
+            {
+                Properties.Settings.Default.ManualMarkerIP = textBoxMarkerIP.Text;
+                Properties.Settings.Default.ManualMarkerPort = textBoxMarkerPort.Text;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Error saving manual marker settings", ex, "Control.SaveManualMarkerSettings");
+            }
+        }
+
+        private void SendUDPMarker(int markerValue, string description)
+        {
+            string ip = textBoxMarkerIP.Text;
+            string portText = textBoxMarkerPort.Text;
+
+            try
+            {
+                // Parse port number
+                if (!int.TryParse(portText, out int port))
+                {
+                    ErrorLogger.LogError($"Invalid port number: {portText}", null, "Control.SendUDPMarker");
+                    MessageBox.Show("Invalid port number. Please enter a valid port (e.g., 5501).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Create UDP client and send marker
+                using (var udpClient = new System.Net.Sockets.UdpClient())
+                {
+                    var endpoint = new System.Net.IPEndPoint(System.Net.IPAddress.Parse(ip), port);
+                    byte[] data = BitConverter.GetBytes(markerValue);
+
+                    // Send in big-endian format (consistent with udp_to_key.py)
+                    if (BitConverter.IsLittleEndian)
+                    {
+                        Array.Reverse(data);
+                    }
+
+                    udpClient.Send(data, data.Length, endpoint);
+
+                    // Log the send
+                    ErrorLogger.LogInfo($"UDP marker sent: {description} (value={markerValue}) to {ip}:{port}", "Control.SendUDPMarker");
+
+                    // Also write to CSV file if logging is active
+                    if (WriteToFile != null)
+                    {
+                        try
+                        {
+                            WriteToFile.WriteMarker(markerValue);
+                            ErrorLogger.LogInfo($"Marker {markerValue} written to CSV file", "Control.SendUDPMarker");
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error writing marker to CSV file", ex, "Control.SendUDPMarker");
+                        }
+                    }
+                }
+
+                // Save settings after successful send
+                SaveManualMarkerSettings();
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                ErrorLogger.LogError($"Socket error sending UDP marker to {ip}:{portText}", ex, "Control.SendUDPMarker");
+                MessageBox.Show($"Failed to send marker: {ex.Message}", "Network Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (FormatException ex)
+            {
+                ErrorLogger.LogError($"Invalid IP address format: {ip}", ex, "Control.SendUDPMarker");
+                MessageBox.Show("Invalid IP address format. Please enter a valid IP (e.g., 127.0.0.1).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError($"Unexpected error sending UDP marker", ex, "Control.SendUDPMarker");
+                MessageBox.Show($"Failed to send marker: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ButtonSendMarker_Click(object sender, EventArgs e)
+        {
+            SendUDPMarker(230, "Manual marker");
+        }
+
+        #endregion
     }
 
 
