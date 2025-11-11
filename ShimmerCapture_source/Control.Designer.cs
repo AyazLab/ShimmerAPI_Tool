@@ -50,6 +50,7 @@
             this.ToolStripMenuItemOpenLogFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.configureSignalDisplayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configureUDPMarkersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pairBluetoothDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,6 +86,7 @@
             this.groupBoxPPG = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.labelUDPStatus = new System.Windows.Forms.Label();
@@ -96,7 +98,6 @@
             this.textBoxMarkerPort = new System.Windows.Forms.TextBox();
             this.buttonSendMarker = new System.Windows.Forms.Button();
             this.button_ConfigureSignals = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.groupBoxGraph1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -123,7 +124,7 @@
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(34, 88);
+            this.buttonConnect.Location = new System.Drawing.Point(394, 52);
             this.buttonConnect.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(251, 54);
@@ -207,7 +208,7 @@
             this.comboBoxComPorts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxComPorts.FormattingEnabled = true;
             this.comboBoxComPorts.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.comboBoxComPorts.Location = new System.Drawing.Point(34, 39);
+            this.comboBoxComPorts.Location = new System.Drawing.Point(41, 61);
             this.comboBoxComPorts.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.comboBoxComPorts.Name = "comboBoxComPorts";
             this.comboBoxComPorts.Size = new System.Drawing.Size(248, 39);
@@ -259,7 +260,8 @@
             this.ToolStripMenuItemOpenDataFolder,
             this.ToolStripMenuItemOpenLogFolder,
             this.configureSignalDisplayToolStripMenuItem,
-            this.configureUDPMarkersToolStripMenuItem});
+            this.configureUDPMarkersToolStripMenuItem,
+            this.pairBluetoothDeviceToolStripMenuItem});
             this.toolStripItemTools.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemTools.Image")));
             this.toolStripItemTools.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemTools.Name = "toolStripItemTools";
@@ -316,7 +318,14 @@
             this.configureUDPMarkersToolStripMenuItem.Size = new System.Drawing.Size(507, 54);
             this.configureUDPMarkersToolStripMenuItem.Text = "Configure UDP Markers";
             this.configureUDPMarkersToolStripMenuItem.Click += new System.EventHandler(this.configureUDPMarkersToolStripMenuItem_Click);
-            // 
+            //
+            // pairBluetoothDeviceToolStripMenuItem
+            //
+            this.pairBluetoothDeviceToolStripMenuItem.Name = "pairBluetoothDeviceToolStripMenuItem";
+            this.pairBluetoothDeviceToolStripMenuItem.Size = new System.Drawing.Size(507, 54);
+            this.pairBluetoothDeviceToolStripMenuItem.Text = "Pair Bluetooth Device...";
+            this.pairBluetoothDeviceToolStripMenuItem.Click += new System.EventHandler(this.pairBluetoothDeviceToolStripMenuItem_Click);
+            //
             // toolStripSplitButton1
             // 
             this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -420,7 +429,7 @@
             // buttonReload
             // 
             this.buttonReload.Enabled = false;
-            this.buttonReload.Location = new System.Drawing.Point(300, 34);
+            this.buttonReload.Location = new System.Drawing.Point(307, 52);
             this.buttonReload.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonReload.Name = "buttonReload";
             this.buttonReload.Size = new System.Drawing.Size(69, 54);
@@ -666,7 +675,15 @@
             this.groupBox1.Size = new System.Drawing.Size(708, 155);
             this.groupBox1.TabIndex = 155;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Connection";
+            this.groupBox1.Text = "COM / Bluetooth Connection";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(348, 103);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(0, 32);
+            this.label4.TabIndex = 126;
             // 
             // groupBox2
             // 
@@ -802,14 +819,6 @@
             this.button_ConfigureSignals.UseVisualStyleBackColor = true;
             this.button_ConfigureSignals.Click += new System.EventHandler(this.button_ConfigureSignals_Click);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(348, 103);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 32);
-            this.label4.TabIndex = 126;
-            // 
             // Control
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
@@ -929,6 +938,7 @@
         private System.Windows.Forms.ToolStripMenuItem configureSignalDisplayToolStripMenuItem;
         private System.Windows.Forms.Button button_ConfigureSignals;
         private System.Windows.Forms.ToolStripMenuItem configureUDPMarkersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pairBluetoothDeviceToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBoxExGLeadOff;
         private System.Windows.Forms.GroupBox groupBoxPPG;
         private System.Windows.Forms.Label label4;

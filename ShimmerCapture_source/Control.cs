@@ -208,10 +208,11 @@ namespace ShimmerAPI
             ComPort = comboBoxComPorts.Text;
 
             // btsd changes1
-            
+
             buttonReload.Enabled = true;
-            comboBoxComPorts.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            comboBoxComPorts.AutoCompleteSource = AutoCompleteSource.ListItems;
+            // AutoComplete not supported with DropDownList style
+            //comboBoxComPorts.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            //comboBoxComPorts.AutoCompleteSource = AutoCompleteSource.ListItems;
 
 
 
@@ -1288,9 +1289,33 @@ namespace ShimmerAPI
 
         public void Connect()
         {
-            ComPort = comboBoxComPorts.Text;
-            if(!ComPort.Contains("No Valid")) { 
-                ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", ComPort);
+            // Extract COM port and device name from ComboBox selection
+            string portName = null;
+            string deviceName = "Shimmer"; // Default name
+
+            // Check if selected item is a ComPortInfo object (enhanced detection)
+            if (comboBoxComPorts.SelectedItem is ComPortInfo info)
+            {
+                portName = info.PortName;
+
+                // Use friendly device name if available
+                if (!string.IsNullOrEmpty(info.DeviceName))
+                {
+                    deviceName = info.DeviceName;
+                    ErrorLogger.LogInfo($"Connecting to {deviceName} on {portName}", "Control.Connect");
+                }
+            }
+            else
+            {
+                // Fallback: use text directly (backward compatibility)
+                portName = comboBoxComPorts.Text;
+            }
+
+            ComPort = portName;
+
+            if (!string.IsNullOrEmpty(ComPort) && !ComPort.Contains("No Valid"))
+            {
+                ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort(deviceName, ComPort);
                 ShimmerDevice.UICallback += this.HandleEvent;
 
                 //for Shimmer and ShimmerSDBT
@@ -2929,37 +2954,121 @@ namespace ShimmerAPI
 
         private void buttonReload_Click(object sender, EventArgs e)
         {
-            string curComPort = comboBoxComPorts.SelectedText;
+            // Get currently selected COM port name
+            string curComPort = null;
+            if (comboBoxComPorts.SelectedItem is ComPortInfo currentInfo)
+            {
+                curComPort = currentInfo.PortName;
+            }
+            else if (!string.IsNullOrEmpty(comboBoxComPorts.Text))
+            {
+                curComPort = comboBoxComPorts.Text;
+            }
+
             comboBoxComPorts.Items.Clear();
-            String[] names = SerialPort.GetPortNames();
-            int i = 0;
-            int numPorts = names.Length;
-            bool COMfound = false;
-            foreach (String s in names)
+
+            try
             {
-                comboBoxComPorts.Items.Add(s);
-                if(s==curComPort)
+                // Use enhanced COM port detection
+                List<ComPortInfo> ports = ComPortHelper.GetEnhancedComPorts();
+
+                if (ports == null || ports.Count == 0)
                 {
-                    comboBoxComPorts.SelectedIndex = i;
-                    COMfound = true;
+                    comboBoxComPorts.Text = "No Valid Ports";
+                    buttonConnect.Enabled = false;
+                    ErrorLogger.LogInfo("No COM ports found", "Control.buttonReload_Click");
+                    return;
                 }
-                i++;
-                
 
-            }
-            if (!COMfound&&i>0)
-            {
-                comboBoxComPorts.SelectedIndex = i-1;
-                buttonConnect.Enabled = true;
-            }
-            else if(i==0||numPorts==0)
-            {
-                comboBoxComPorts.Items.Clear();
-                comboBoxComPorts.Text = "No Valid Ports";
-                buttonConnect.Enabled = false;
-            }
+                // Track indices for smart selection
+                int firstShimmerIndex = -1;
+                int currentPortIndex = -1;
 
-            
+                // Add all ports to ComboBox
+                for (int i = 0; i < ports.Count; i++)
+                {
+                    comboBoxComPorts.Items.Add(ports[i]); // Uses ComPortInfo.ToString()
+
+                    // Track first Shimmer device
+                    if (ports[i].IsShimmer && firstShimmerIndex == -1)
+                    {
+                        firstShimmerIndex = i;
+                    }
+
+                    // Track previously selected port
+                    if (ports[i].PortName == curComPort)
+                    {
+                        currentPortIndex = i;
+                    }
+                }
+
+                // Smart selection priority:
+                // 1. Keep current selection if still available
+                // 2. Auto-select first Shimmer device
+                // 3. Select last port in list
+                if (currentPortIndex >= 0)
+                {
+                    comboBoxComPorts.SelectedIndex = currentPortIndex;
+                    buttonConnect.Enabled = true;
+                    ErrorLogger.LogInfo($"Kept previous selection: {curComPort}", "Control.buttonReload_Click");
+                }
+                else if (firstShimmerIndex >= 0)
+                {
+                    comboBoxComPorts.SelectedIndex = firstShimmerIndex;
+                    buttonConnect.Enabled = true;
+                    ErrorLogger.LogInfo($"Auto-selected Shimmer device: {ports[firstShimmerIndex].PortName}", "Control.buttonReload_Click");
+                }
+                else if (ports.Count > 0)
+                {
+                    comboBoxComPorts.SelectedIndex = ports.Count - 1;
+                    buttonConnect.Enabled = true;
+                }
+
+                ErrorLogger.LogInfo($"COM port list refreshed: {ports.Count} ports, {ports.Count(p => p.IsShimmer)} Shimmer devices", "Control.buttonReload_Click");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Enhanced COM port detection failed, using fallback", ex, "Control.buttonReload_Click");
+
+                // Fallback to simple port detection
+                try
+                {
+                    String[] names = SerialPort.GetPortNames();
+                    int numPorts = names.Length;
+
+                    if (numPorts == 0)
+                    {
+                        comboBoxComPorts.Text = "No Valid Ports";
+                        buttonConnect.Enabled = false;
+                    }
+                    else
+                    {
+                        bool COMfound = false;
+                        for (int i = 0; i < names.Length; i++)
+                        {
+                            comboBoxComPorts.Items.Add(names[i]);
+                            if (names[i] == curComPort)
+                            {
+                                comboBoxComPorts.SelectedIndex = i;
+                                COMfound = true;
+                            }
+                        }
+
+                        if (!COMfound)
+                        {
+                            comboBoxComPorts.SelectedIndex = numPorts - 1;
+                        }
+
+                        buttonConnect.Enabled = true;
+                    }
+                }
+                catch (Exception fallbackEx)
+                {
+                    ErrorLogger.LogError("Fallback COM port detection also failed", fallbackEx, "Control.buttonReload_Click");
+                    comboBoxComPorts.Text = "No Valid Ports";
+                    buttonConnect.Enabled = false;
+                }
+            }
         }
 
         private void labelPRR_Click(object sender, EventArgs e)
@@ -3340,6 +3449,21 @@ namespace ShimmerAPI
         private void configureUDPMarkersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenUDPMarkerSettings();
+        }
+
+        private void pairBluetoothDeviceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                BluetoothPairingDialog dialog = new BluetoothPairingDialog();
+                dialog.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError("Failed to open Bluetooth pairing dialog", ex, "Control.pairBluetoothDeviceToolStripMenuItem_Click");
+                MessageBox.Show("Failed to open Bluetooth pairing dialog:\n\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void labelExGLeadOffDetection_Click(object sender, EventArgs e)
