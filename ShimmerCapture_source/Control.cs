@@ -1296,7 +1296,6 @@ namespace ShimmerAPI
 
             FirstTime = true;
             labelPRR.Visible = true;
-            buttonStart_Click1();
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var subFolderPath = Path.Combine(path, "Shimmer_GSR");
@@ -1324,7 +1323,7 @@ namespace ShimmerAPI
                 MessageBox.Show($"Warning: Failed to start CSV logging.\n{ex.Message}", "CSV Logging Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            // Create marker log file
+            // Create marker log file BEFORE starting streaming (so marker 231 gets logged)
             try
             {
                 string markerFilename = Path.Combine(subFolderPath, $"{textBoxSubj.Text}_{timestamp}_markers.csv");
@@ -1340,6 +1339,9 @@ namespace ShimmerAPI
                 ErrorLogger.LogError($"Failed to create marker log file", ex, "Control.buttonStart_Click");
                 // Non-critical error - continue without marker log
             }
+
+            // NOW start streaming (this will send marker 231)
+            buttonStart_Click1();
 
             // UDP controls removed - settings now in dialog
 
@@ -1427,7 +1429,12 @@ namespace ShimmerAPI
             // UDP controls removed - settings now in dialog
             ShimmerDevice.StopStreaming();
 
-            // Auto-send marker 232 on recording stop
+            // Send marker 9 BEFORE closing files
+            SendKeys.Send("{F9}");
+            if(WriteToFile!=null)
+                WriteToFile.WriteMarker(9);
+
+            // Auto-send marker 232 on recording stop (BEFORE closing marker log)
             try
             {
                 SendUDPMarker(232, "Recording stop");
@@ -1438,11 +1445,10 @@ namespace ShimmerAPI
             }
 
             udpListener.StopListener();
+
+            // NOW close files (marker 232 has been logged)
             buttonStop_Click1();
 
-            SendKeys.Send("{F9}");
-            if(WriteToFile!=null)
-                WriteToFile.WriteMarker(9);
             //timer1.Stop();
             textBoxSubj.Enabled = true;
 
@@ -3006,13 +3012,9 @@ namespace ShimmerAPI
                 using (var udpClient = new System.Net.Sockets.UdpClient())
                 {
                     var endpoint = new System.Net.IPEndPoint(System.Net.IPAddress.Parse(ip), port);
-                    byte[] data = BitConverter.GetBytes(markerValue);
 
-                    // Send in big-endian format (consistent with udp_to_key.py)
-                    if (BitConverter.IsLittleEndian)
-                    {
-                        Array.Reverse(data);
-                    }
+                    // Send as single byte (marker values 0-255)
+                    byte[] data = new byte[1] { (byte)markerValue };
 
                     udpClient.Send(data, data.Length, endpoint);
 
