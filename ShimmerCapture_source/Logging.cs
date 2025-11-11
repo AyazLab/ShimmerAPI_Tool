@@ -15,14 +15,22 @@ namespace ShimmerAPI
         private Boolean FirstWrite = true;
         private readonly object fileLock = new object();
         private bool disposed = false;
+        private readonly DateTime sessionStartTime;
+        private readonly string subjectName;
+        private readonly string softwareVersion;
 
-        public Logging(String fileName, String delimeter)
+        public Logging(String fileName, String delimeter, string subjectName = "", string softwareVersion = "")
         {
             Delimeter = delimeter;
             FileName = fileName;
+            this.subjectName = subjectName;
+            this.softwareVersion = softwareVersion;
+            this.sessionStartTime = DateTime.Now;
+
             try
             {
                 PCsvFile = new StreamWriter(FileName, false);
+                WriteFileHeader();
                 ErrorLogger.LogInfo($"CSV file opened: {fileName}", "Logging.Constructor");
             }
             catch (Exception ex)
@@ -32,6 +40,38 @@ namespace ShimmerAPI
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 // Re-throw so caller knows file creation failed
                 throw;
+            }
+        }
+
+        private void WriteFileHeader()
+        {
+            lock (fileLock)
+            {
+                try
+                {
+                    if (PCsvFile == null)
+                        return;
+
+                    // Write metadata header
+                    PCsvFile.WriteLine("# ShimmerCapture Data Log");
+                    PCsvFile.WriteLine($"# Software Version: {(string.IsNullOrEmpty(softwareVersion) ? "N/A" : softwareVersion)}");
+                    PCsvFile.WriteLine($"# Session Start Date: {sessionStartTime:yyyy-MM-dd}");
+                    PCsvFile.WriteLine($"# Session Start Time: {sessionStartTime:HH:mm:ss.fff}");
+                    PCsvFile.WriteLine($"# Subject: {(string.IsNullOrEmpty(subjectName) ? "N/A" : subjectName)}");
+                    PCsvFile.WriteLine($"# File: {Path.GetFileName(FileName)}");
+                    PCsvFile.WriteLine("#");
+                    PCsvFile.WriteLine("# Data Format:");
+                    PCsvFile.WriteLine("#   SystemTime: PC clock time when data received (HH:MM:SS.ms)");
+                    PCsvFile.WriteLine("#   ElapsedTime: Milliseconds since recording started");
+                    PCsvFile.WriteLine("#   Markers: UDP markers received (MRKxxx) or blank");
+                    PCsvFile.WriteLine("#");
+
+                    PCsvFile.Flush();
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error writing CSV file header", ex, "Logging.WriteFileHeader");
+                }
             }
         }
 

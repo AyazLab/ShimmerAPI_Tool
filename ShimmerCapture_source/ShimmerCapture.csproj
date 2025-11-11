@@ -115,6 +115,7 @@
     <Reference Include="System.IO.Ports, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Ports.5.0.0\lib\net461\System.IO.Ports.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -171,11 +172,26 @@
       <DependentUpon>Configuration.cs</DependentUpon>
     </Compile>
     <Compile Include="Logging.cs" />
+    <Compile Include="MarkerLogger.cs" />
     <Compile Include="Control.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Control.Designer.cs">
       <DependentUpon>Control.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SignalGroupHelper.cs" />
+    <Compile Include="SignalSelectionSettings.cs" />
+    <Compile Include="SignalSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SignalSelectionDialog.Designer.cs">
+      <DependentUpon>SignalSelectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UdpMarkerSettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UdpMarkerSettingsDialog.Designer.cs">
+      <DependentUpon>UdpMarkerSettingsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -223,6 +239,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration.resx">
       <DependentUpon>Configuration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SignalSelectionDialog.resx">
+      <DependentUpon>SignalSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UdpMarkerSettingsDialog.resx">
+      <DependentUpon>UdpMarkerSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

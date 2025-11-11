@@ -74,18 +74,14 @@ namespace ShimmerAPI
         //public string status_text = "";
         private Configuration Configure;
         private Logging WriteToFile;
+        private MarkerLogger markerLogger;
         private Orientation3D Orientation3DForm;
         private System.IO.Ports.SerialPort SerialPort = new SerialPort();
         private string ComPort;
         public ShimmerLogAndStreamSystemSerialPort ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort("Shimmer", "");
 
-        // Manual UDP Marker Controls
-        private GroupBox groupBoxManualMarker;
-        private TextBox textBoxMarkerIP;
-        private TextBox textBoxMarkerPort;
-        private Button buttonSendMarker;
-        private System.Windows.Forms.Label labelMarkerIP;
-        private System.Windows.Forms.Label labelMarkerPort;
+        // Manual UDP Marker Controls are declared in Control.Designer.cs
+        // labelUDPStatus, groupBoxManualMarker, textBoxMarkerIP, textBoxMarkerPort, buttonSendMarker, labelMarkerIP, labelMarkerPort
 
         //Plot
         private ZedGraph.ZedGraphControl ZedGraphControl2 = new ZedGraph.ZedGraphControl(); //These need to be defined here for Linux. Otherwise can't later be added
@@ -104,13 +100,11 @@ namespace ShimmerAPI
         private int NumberOfTracesCountGraph2 = 0;
         private int NumberOfTracesCountGraph3 = 0;
         private static int maxNumberOfTracesToPlot = 30;
-        public CheckBox[] CheckBoxArrayGroup1;
-        public CheckBox[] CheckBoxArrayGroup2;
-        public CheckBox[] CheckBoxArrayGroup3;
         public static bool FirstTime = true;
         private List<String> SelectedSignalNameGroup1 = new List<String>();
         private List<String> SelectedSignalNameGroup2 = new List<String>();
         private List<String> SelectedSignalNameGroup3 = new List<String>();
+        private List<String> AvailableSignalNames = new List<String>();
         private Random Rnd = new Random();
         private List<String> ShimmerIdSetup = new List<String>();
         private bool IsGraph2Visible = false;
@@ -234,36 +228,6 @@ namespace ShimmerAPI
                 //ZedGraphControl3.Size = new System.Drawing.Size(this.Size.Width - 1000, ZedGraphControl3.Size.Height);
             }
 
-            CheckBoxArrayGroup1 = new CheckBox[30] { checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6,
-            checkBox7, checkBox8, checkBox9, checkBox10, checkBox11, checkBox12, checkBox13, checkBox14,
-            checkBox15, checkBox16, checkBox17, checkBox18, checkBox19, checkBox20, checkBox21,
-            checkBox22, checkBox23, checkBox24, checkBox25, checkBox26, checkBox27, checkBox28,
-            checkBox29, checkBox30};
-            foreach (var checkBox in CheckBoxArrayGroup1)
-            {
-                checkBox.CheckedChanged += new EventHandler(CheckBoxArrayGroup1_CheckedChanged);
-            }
-
-            CheckBoxArrayGroup2 = new CheckBox[30] { checkBox31, checkBox32, checkBox33, checkBox34, checkBox35, checkBox36,
-            checkBox37, checkBox38, checkBox39, checkBox40, checkBox41, checkBox42, checkBox43, checkBox44,
-            checkBox45, checkBox46, checkBox47, checkBox48, checkBox49, checkBox50, checkBox51,
-            checkBox52, checkBox53, checkBox54, checkBox55, checkBox56, checkBox57, checkBox58,
-            checkBox59, checkBox60};
-            foreach (var checkBox in CheckBoxArrayGroup2)
-            {
-                checkBox.CheckedChanged += new EventHandler(CheckBoxArrayGroup2_CheckedChanged);
-            }
-
-            CheckBoxArrayGroup3 = new CheckBox[30] { checkBox61, checkBox62, checkBox63, checkBox64, checkBox65, checkBox66,
-            checkBox67, checkBox68, checkBox69, checkBox70, checkBox71, checkBox72, checkBox73, checkBox74,
-            checkBox75, checkBox76, checkBox77, checkBox78, checkBox79, checkBox80, checkBox81,
-            checkBox82, checkBox83, checkBox84, checkBox85, checkBox86, checkBox87, checkBox88,
-            checkBox89, checkBox90};
-            foreach (var checkBox in CheckBoxArrayGroup3)
-            {
-                checkBox.CheckedChanged += new EventHandler(CheckBoxArrayGroup3_CheckedChanged);
-            }
-
             InitializeGraphs();
             initializeExGLeadOff();
 
@@ -271,13 +235,19 @@ namespace ShimmerAPI
             if(numPorts>0)
                 comboBoxComPorts.SelectedText = Properties.Settings.Default.COMport;
             textBoxSubj.Text = Properties.Settings.Default.Subject;
-            textBox_udpPort.Text = Properties.Settings.Default.UDPport;
-            checkBox91.Checked=Properties.Settings.Default.UDPenabled;
-            udpMarkersEnabled = checkBox91.Checked;
 
-            int.TryParse(textBox_udpPort.Text, out udpPortNo);
+            // Load UDP settings
+            udpMarkersEnabled = Properties.Settings.Default.UDPenabled;
+
+            if (!int.TryParse(Properties.Settings.Default.UDPport, out udpPortNo))
+            {
+                udpPortNo = 5501; // Default port
+            }
 
             udpListener = new UDPListener(udpPortNo);
+
+            // Update UDP status display after form controls are initialized
+            UpdateUDPStatusDisplay();
 
             buttonReload_Click(sender, null);
 
@@ -391,8 +361,8 @@ namespace ShimmerAPI
             MyPaneGraph3.Legend.Location = new Location(0f, 0f, CoordType.ChartFraction, AlignH.Left, AlignV.Top);
             MyPaneGraph3.YAxis.MajorGrid.IsZeroLine = false;
 
-            // Initialize Manual Marker UI
-            InitializeManualMarkerControls();
+            // Manual Marker UI is now defined in Designer (no longer dynamically created)
+            // InitializeManualMarkerControls(); // Removed - controls now in Designer
             // Load saved settings
             LoadManualMarkerSettings();
         }
@@ -431,27 +401,6 @@ namespace ShimmerAPI
             ZedGraphControl1.Size = new System.Drawing.Size(this.Size.Width - scale3, ZedGraphControl1.Size.Height);
             ZedGraphControl2.Size = new System.Drawing.Size(this.Size.Width - scale3, ZedGraphControl2.Size.Height);
             ZedGraphControl3.Size = new System.Drawing.Size(this.Size.Width - scale3, ZedGraphControl3.Size.Height);*/
-        }
-
-        private void CheckBoxArrayGroup1_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                SelectedSignalNameGroup1.Clear();
-                for (int i = 0; i < CheckBoxArrayGroup1.Length; i++)
-                {
-                    if (CheckBoxArrayGroup1[i].Checked && CheckBoxArrayGroup1[i].Enabled)
-                    {
-                        SelectedSignalNameGroup1.Add(CheckBoxArrayGroup1[i].Name);
-                        //Create new textbox
-
-                    }
-                }
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-
-            }
         }
 
         public void ShowChannelLabels(List<String> names)
@@ -549,41 +498,80 @@ namespace ShimmerAPI
 
         }
 
-        private void CheckBoxArrayGroup2_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Loads saved signal selections from persistent storage
+        /// </summary>
+        private void LoadSavedSignalSelections(List<String> availableSignals)
         {
             try
             {
-                SelectedSignalNameGroup2.Clear();
-                for (int i = 0; i < CheckBoxArrayGroup2.Length; i++)
+                // Store available signals for later use in dialog
+                AvailableSignalNames = new List<String>(availableSignals);
+
+                // Load saved selections
+                List<string> savedGraph1, savedGraph2, savedGraph3;
+                bool loaded = ShimmerCapture.SignalSelectionSettings.LoadSelections(
+                    out savedGraph1, out savedGraph2, out savedGraph3);
+
+                if (loaded)
                 {
-                    if (CheckBoxArrayGroup2[i].Checked && CheckBoxArrayGroup2[i].Enabled)
-                    {
-                        SelectedSignalNameGroup2.Add(CheckBoxArrayGroup2[i].Name);
-                    }
+                    // Validate and filter against available signals (best-effort)
+                    SelectedSignalNameGroup1 = ShimmerCapture.SignalSelectionSettings.ValidateAndFilter(
+                        savedGraph1, AvailableSignalNames);
+                    SelectedSignalNameGroup2 = ShimmerCapture.SignalSelectionSettings.ValidateAndFilter(
+                        savedGraph2, AvailableSignalNames);
+                    SelectedSignalNameGroup3 = ShimmerCapture.SignalSelectionSettings.ValidateAndFilter(
+                        savedGraph3, AvailableSignalNames);
+
+                    System.Diagnostics.Debug.WriteLine($"Loaded signal selections: Graph1={SelectedSignalNameGroup1.Count}, Graph2={SelectedSignalNameGroup2.Count}, Graph3={SelectedSignalNameGroup3.Count}");
                 }
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception ex)
             {
-
+                System.Diagnostics.Debug.WriteLine($"Error loading signal selections: {ex.Message}");
             }
         }
 
-        private void CheckBoxArrayGroup3_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Opens the signal selection dialog for user to choose which signals to display
+        /// </summary>
+        private void OpenSignalSelectionDialog()
         {
+            if (AvailableSignalNames == null || AvailableSignalNames.Count == 0)
+            {
+                MessageBox.Show("No signals available. Please start streaming first.",
+                    "No Signals", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             try
             {
-                SelectedSignalNameGroup3.Clear();
-                for (int i = 0; i < CheckBoxArrayGroup3.Length; i++)
+                var dialog = new ShimmerCapture.SignalSelectionDialog(
+                    AvailableSignalNames,
+                    SelectedSignalNameGroup1,
+                    SelectedSignalNameGroup2,
+                    SelectedSignalNameGroup3);
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    if (CheckBoxArrayGroup3[i].Checked && CheckBoxArrayGroup3[i].Enabled)
-                    {
-                        SelectedSignalNameGroup3.Add(CheckBoxArrayGroup3[i].Name);
-                    }
+                    // Update selections
+                    SelectedSignalNameGroup1 = dialog.Graph1Selections;
+                    SelectedSignalNameGroup2 = dialog.Graph2Selections;
+                    SelectedSignalNameGroup3 = dialog.Graph3Selections;
+
+                    // Save selections
+                    ShimmerCapture.SignalSelectionSettings.SaveSelections(
+                        SelectedSignalNameGroup1,
+                        SelectedSignalNameGroup2,
+                        SelectedSignalNameGroup3);
+
+                    System.Diagnostics.Debug.WriteLine($"Signal selections updated and saved: Graph1={SelectedSignalNameGroup1.Count}, Graph2={SelectedSignalNameGroup2.Count}, Graph3={SelectedSignalNameGroup3.Count}");
                 }
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception ex)
             {
-
+                System.Diagnostics.Debug.WriteLine($"Error opening signal selection dialog: {ex.Message}");
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -592,23 +580,10 @@ namespace ShimmerAPI
             Configure = new Configuration(this);
             if (Configure.ShowDialog(this) == DialogResult.OK)
             {
-                foreach (CheckBox cb in CheckBoxArrayGroup1)
-                {
-                    cb.Checked = false;
-                    cb.Visible = false;
-                }
-
-                foreach (CheckBox cb in CheckBoxArrayGroup2)
-                {
-                    cb.Checked = false;
-                    cb.Visible = false;
-                }
-
-                foreach (CheckBox cb in CheckBoxArrayGroup3)
-                {
-                    cb.Checked = false;
-                    cb.Visible = false;
-                }
+                // Clear signal selections when configuration changes
+                SelectedSignalNameGroup1.Clear();
+                SelectedSignalNameGroup2.Clear();
+                SelectedSignalNameGroup3.Clear();
 
                 if (ShimmerDevice.Is3DOrientationEnabled())
                 {
@@ -619,6 +594,11 @@ namespace ShimmerAPI
                     ToolStripMenuItemShow3DOrientation.Enabled = false;
                 }
             }
+        }
+
+        private void ConfigureSignalsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenSignalSelectionDialog();
         }
 
         private void ToolStripMenuItemQuit_Click(object sender, EventArgs e)
@@ -789,190 +769,6 @@ namespace ShimmerAPI
             MessageBox.Show(helpMessage, "Bluetooth Setup Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public void SetupCheckboxesGroup1(string shimmerId, string[] namesRaw, string[] namesCal)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action<string, string[], string[]>(SetupCheckboxesGroup1), new object[] { shimmerId, namesRaw, namesCal });
-                return;
-            }
-
-            foreach (CheckBox cb in CheckBoxArrayGroup1)
-            {
-                cb.Name = "";
-            }
-
-            int count = 0;
-            for (int j = 0; j < namesRaw.Length; j++)
-            {
-                if (j >= CheckBoxArrayGroup1.Length || count >= CheckBoxArrayGroup1.Length || j >= namesRaw.Length)
-                {
-                    return;
-                }
-                CheckBoxArrayGroup1[count].Visible = true;
-                CheckBoxArrayGroup1[count].Text = namesRaw[j];
-                CheckBoxArrayGroup1[count].Name = namesRaw[j];
-                int l = namesRaw[j].Length;
-                String signalNameNoFormat = namesRaw[j].Substring(0, l - 4);
-                String signalNameCalFormat = signalNameNoFormat + " CAL";
-                //If same signal name with CAL format exists, add it to next checkbox. Otherwise skip next checkbox.
-                if (namesCal.Contains(signalNameCalFormat))
-                {
-                    CheckBoxArrayGroup1[count + 1].Visible = true;
-                    CheckBoxArrayGroup1[count + 1].Text = "CAL";
-                    CheckBoxArrayGroup1[count + 1].Name = signalNameCalFormat;
-                }
-                count += 2;
-            }
-            for (int j = 0; j < namesCal.Length; j++)
-            {
-                if (j >= CheckBoxArrayGroup1.Length || count >= CheckBoxArrayGroup1.Length || j >= namesCal.Length)
-                {
-                    return;
-                }
-                //If CAL signal already added to checkbox, skip it. 
-                bool skip = false;
-                foreach (CheckBox cb in CheckBoxArrayGroup1)
-                {
-                    if (cb.Name.Equals(namesCal[j]))
-                    {
-                        skip = true;
-                    }
-                }
-                if (!skip)
-                {
-                    CheckBoxArrayGroup1[count].Visible = true;
-                    CheckBoxArrayGroup1[count].Text = namesCal[j];
-                    CheckBoxArrayGroup1[count].Name = namesCal[j];
-                    count++;
-                }
-            }
-        }
-
-        public void SetupCheckboxesGroup2(string shimmerId, string[] namesRaw, string[] namesCal)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action<string, string[], string[]>(SetupCheckboxesGroup2), new object[] { shimmerId, namesRaw, namesCal });
-                return;
-            }
-
-            if (IsGraph2Visible)
-            {
-                foreach (CheckBox cb in CheckBoxArrayGroup2)
-                {
-                    cb.Name = "";
-                }
-                int count = 0;
-                for (int j = 0; j < namesRaw.Length; j++)
-                {
-                    if (j >= CheckBoxArrayGroup2.Length || count >= CheckBoxArrayGroup2.Length || j >= namesRaw.Length)
-                    {
-                        return;
-                    }
-                    CheckBoxArrayGroup2[count].Visible = true;
-                    CheckBoxArrayGroup2[count].Text = namesRaw[j];
-                    CheckBoxArrayGroup2[count].Name = namesRaw[j];
-                    int l = namesRaw[j].Length;
-                    String signalNameNoFormat = namesRaw[j].Substring(0, l - 4);
-                    String signalNameCalFormat = signalNameNoFormat + " CAL";
-                    //If same signal name with CAL format exists, add it to next checkbox. Otherwise skip next checkbox.
-                    if (namesCal.Contains(signalNameCalFormat))
-                    {
-                        CheckBoxArrayGroup2[count + 1].Visible = true;
-                        CheckBoxArrayGroup2[count + 1].Text = "CAL";
-                        CheckBoxArrayGroup2[count + 1].Name = signalNameCalFormat;
-                    }
-                    count += 2;
-                }
-                for (int j = 0; j < namesCal.Length; j++)
-                {
-                    if (j >= CheckBoxArrayGroup2.Length || count >= CheckBoxArrayGroup2.Length || j >= namesCal.Length)
-                    {
-                        return;
-                    }
-                    //If CAL signal already added to checkbox, skip it. 
-                    bool skip = false;
-                    foreach (CheckBox cb in CheckBoxArrayGroup2)
-                    {
-                        if (cb.Name.Equals(namesCal[j]))
-                        {
-                            skip = true;
-                        }
-                    }
-                    if (!skip)
-                    {
-                        CheckBoxArrayGroup2[count].Visible = true;
-                        CheckBoxArrayGroup2[count].Text = namesCal[j];
-                        CheckBoxArrayGroup2[count].Name = namesCal[j];
-                        count++;
-                    }
-                }
-            }
-        }
-
-        public void SetupCheckboxesGroup3(string shimmerId, string[] namesRaw, string[] namesCal)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action<string, string[], string[]>(SetupCheckboxesGroup3), new object[] { shimmerId, namesRaw, namesCal });
-                return;
-            }
-
-            if (IsGraph3Visible)
-            {
-                foreach (CheckBox cb in CheckBoxArrayGroup3)
-                {
-                    cb.Name = "";
-                }
-                int count = 0;
-                for (int j = 0; j < namesRaw.Length; j++)
-                {
-                    if (j >= CheckBoxArrayGroup3.Length || count >= CheckBoxArrayGroup3.Length || j >= namesRaw.Length)
-                    {
-                        return;
-                    }
-                    CheckBoxArrayGroup3[count].Visible = true;
-                    CheckBoxArrayGroup3[count].Text = namesRaw[j];
-                    CheckBoxArrayGroup3[count].Name = namesRaw[j];
-                    int l = namesRaw[j].Length;
-                    String signalNameNoFormat = namesRaw[j].Substring(0, l - 4);
-                    String signalNameCalFormat = signalNameNoFormat + " CAL";
-                    //If same signal name with CAL format exists, add it to next checkbox. Otherwise skip next checkbox.
-                    if (namesCal.Contains(signalNameCalFormat))
-                    {
-                        CheckBoxArrayGroup3[count + 1].Visible = true;
-                        CheckBoxArrayGroup3[count + 1].Text = "CAL";
-                        CheckBoxArrayGroup3[count + 1].Name = signalNameCalFormat;
-                    }
-                    count += 2;
-                }
-                for (int j = 0; j < namesCal.Length; j++)
-                {
-                    if (j >= CheckBoxArrayGroup3.Length || count >= CheckBoxArrayGroup3.Length || j >= namesCal.Length)
-                    {
-                        return;
-                    }
-                    //If CAL signal already added to checkbox, skip it. 
-                    bool skip = false;
-                    foreach (CheckBox cb in CheckBoxArrayGroup3)
-                    {
-                        if (cb.Name.Equals(namesCal[j]))
-                        {
-                            skip = true;
-                        }
-                    }
-                    if (!skip)
-                    {
-                        CheckBoxArrayGroup3[count].Visible = true;
-                        CheckBoxArrayGroup3[count].Text = namesCal[j];
-                        CheckBoxArrayGroup3[count].Name = namesCal[j];
-                        count++;
-                    }
-                }
-            }
-        }
-
         public void SetupGraph1(int numberOfTraces, String[] signalNames)
         {
             if (numberOfTraces > maxNumberOfTracesToPlot)
@@ -992,7 +788,7 @@ namespace ShimmerAPI
                 CurvesListGraph1.Add(MyPaneGraph1.AddCurve(signalNames[j], DataListGraph1[j], TraceColours[j], SymbolType.None));
                 CurvesListGraph1[j].Line.Width = 1.5F;
                 NumberOfTracesCountGraph1++;
-                if (NumberOfTracesCountGraph1 >= CheckBoxArrayGroup1.Length)
+                if (NumberOfTracesCountGraph1 >= maxNumberOfTracesToPlot)
                 {
                     return;
                 }
@@ -1019,7 +815,7 @@ namespace ShimmerAPI
                 CurvesListGraph2.Add(MyPaneGraph2.AddCurve(signalNames[j], DataListGraph1[j], TraceColours[j], SymbolType.None));
                 CurvesListGraph2[j].Line.Width = 1.5F;
                 NumberOfTracesCountGraph2++;
-                if (NumberOfTracesCountGraph2 >= CheckBoxArrayGroup2.Length)
+                if (NumberOfTracesCountGraph2 >= maxNumberOfTracesToPlot)
                 {
                     return;
                 }
@@ -1046,7 +842,7 @@ namespace ShimmerAPI
                 CurvesListGraph3.Add(MyPaneGraph3.AddCurve(signalNames[j], DataListGraph1[j], TraceColours[j], SymbolType.None));
                 CurvesListGraph3[j].Line.Width = 1.5F;
                 NumberOfTracesCountGraph3++;
-                if (NumberOfTracesCountGraph3 >= CheckBoxArrayGroup3.Length)
+                if (NumberOfTracesCountGraph3 >= maxNumberOfTracesToPlot)
                 {
                     return;
                 }
@@ -1305,7 +1101,7 @@ namespace ShimmerAPI
             {
                 IsGraph3Visible = true;
                 ZedGraphControl3.Visible = true;
-                SetupCheckboxesGroup3(ShimmerDevice.GetDeviceName(), StreamingSignalNamesRaw.ToArray(), StreamingSignalNamesCal.ToArray());
+                // Signal selection will be handled by SignalSelectionDialog
 
                 if (!usingLinux)
                 {
@@ -1320,7 +1116,7 @@ namespace ShimmerAPI
             {
                 IsGraph2Visible = true;
                 ZedGraphControl2.Visible = true;
-                SetupCheckboxesGroup2(ShimmerDevice.GetDeviceName(), StreamingSignalNamesRaw.ToArray(), StreamingSignalNamesCal.ToArray());
+                // Signal selection will be handled by SignalSelectionDialog
 
                 if (!usingLinux)
                 {
@@ -1339,21 +1135,13 @@ namespace ShimmerAPI
             {
                 ZedGraphControl3.Visible = false;
                 IsGraph3Visible = false;
-                foreach (CheckBox cb in CheckBoxArrayGroup3)
-                {
-                    cb.Visible = false;
-                    cb.Checked = false;
-                }
+                SelectedSignalNameGroup3.Clear();
             }
             else if (IsGraph2Visible)
             {
                 ZedGraphControl2.Visible = false;
                 IsGraph2Visible = false;
-                foreach (CheckBox cb in CheckBoxArrayGroup2)
-                {
-                    cb.Visible = false;
-                    cb.Checked = false;
-                }
+                SelectedSignalNameGroup2.Clear();
             }
         }
 
@@ -1455,24 +1243,10 @@ namespace ShimmerAPI
             StreamingSignalNamesRaw.Clear();
             StreamingSignalNamesCal.Clear();
 
-            // clear all plot checkboxes
-            foreach (CheckBox cb in CheckBoxArrayGroup1)
-            {
-                cb.Checked = false;
-                cb.Visible = false;
-            }
-
-            foreach (CheckBox cb in CheckBoxArrayGroup2)
-            {
-                cb.Checked = false;
-                cb.Visible = false;
-            }
-
-            foreach (CheckBox cb in CheckBoxArrayGroup3)
-            {
-                cb.Checked = false;
-                cb.Visible = false;
-            }
+            // clear all signal selections
+            SelectedSignalNameGroup1.Clear();
+            SelectedSignalNameGroup2.Clear();
+            SelectedSignalNameGroup3.Clear();
         }
 
         public void EnablePPGtoHR(bool enable)
@@ -1539,7 +1313,8 @@ namespace ShimmerAPI
 
             try
             {
-                WriteToFile = new Logging(filename, ",");
+                string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                WriteToFile = new Logging(filename, ",", textBoxSubj.Text, version);
                 ToolStripMenuItemSaveToCSV.Checked = true;
                 ErrorLogger.LogInfo($"Auto-started CSV logging: {filename}", "Control.buttonStart_Click");
             }
@@ -1549,8 +1324,24 @@ namespace ShimmerAPI
                 MessageBox.Show($"Warning: Failed to start CSV logging.\n{ex.Message}", "CSV Logging Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            checkBox91.Enabled = false;
-            textBox_udpPort.Enabled = false;
+            // Create marker log file
+            try
+            {
+                string markerFilename = Path.Combine(subFolderPath, $"{textBoxSubj.Text}_{timestamp}_markers.csv");
+                string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                string deviceInfo = ShimmerDevice != null ? ShimmerDevice.GetDeviceName() : "N/A";
+                string deviceSerial = ShimmerDevice != null ? ShimmerDevice.GetShimmerAddress() : "N/A";
+
+                markerLogger = new MarkerLogger(markerFilename, textBoxSubj.Text, deviceInfo, version, deviceSerial);
+                ErrorLogger.LogInfo($"Marker log file created: {markerFilename}", "Control.buttonStart_Click");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.LogError($"Failed to create marker log file", ex, "Control.buttonStart_Click");
+                // Non-critical error - continue without marker log
+            }
+
+            // UDP controls removed - settings now in dialog
 
             //timer1.Start();  // timer added from toolbox
             SendKeys.Send("{F7}");
@@ -1577,7 +1368,7 @@ namespace ShimmerAPI
             Properties.Settings.Default.UDPport = udpPortNo.ToString();
             Properties.Settings.Default.COMport = comboBoxComPorts.SelectedText;
             Properties.Settings.Default.Subject = textBoxSubj.Text;
-            Properties.Settings.Default.UDPenabled = checkBox91.Checked;
+            Properties.Settings.Default.UDPenabled = udpMarkersEnabled;
             Properties.Settings.Default.Save();
 
             ShimmerDevice.StartStreamingandLog();
@@ -1593,15 +1384,22 @@ namespace ShimmerAPI
             }
 
             if (udpMarkersEnabled)
-            { 
+            {
                 udpListener = new UDPListener(udpPortNo);
+
+                // Set marker logger for inbound markers
+                if (markerLogger != null)
+                {
+                    udpListener.SetMarkerLogger(markerLogger);
+                }
+
                 udpListener.NewMessageReceived += delegate (object o, MyMessageArgs msgData)
                 {
                     string timestamp =  DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
 
                     string s = o.ToString() + " " + msgData.data.ToString();
                     if (WriteToFile != null)
-                    { 
+                    {
                         WriteToFile.WriteMarker(msgData.data[0]);
                         statusStrip1.Text = ("Marker received: "+timestamp+" : "+s);
                     }
@@ -1611,7 +1409,7 @@ namespace ShimmerAPI
                     }
 
                 };
-            
+
                 udpListener.StartListener(udpMsgLen);
             }
         }
@@ -1626,8 +1424,7 @@ namespace ShimmerAPI
         private void Stop()
         {
             labelPRR.Visible = false;
-            checkBox91.Enabled = true;
-            textBox_udpPort.Enabled = true;
+            // UDP controls removed - settings now in dialog
             ShimmerDevice.StopStreaming();
 
             // Auto-send marker 232 on recording stop
@@ -1661,6 +1458,22 @@ namespace ShimmerAPI
                 WriteToFile.CloseFile();
                 ToolStripMenuItemSaveToCSV.Checked = false;
             }
+
+            // Close marker log file
+            if (markerLogger != null)
+            {
+                try
+                {
+                    markerLogger.Close();
+                    markerLogger = null;
+                    ErrorLogger.LogInfo("Marker log file closed", "Control.buttonStop_Click1");
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error closing marker log file", ex, "Control.buttonStop_Click1");
+                }
+            }
+
             ShimmerIdSetup.Clear();
             StreamingSignalNamesRaw.Clear();
             StreamingSignalNamesCal.Clear();
@@ -1750,24 +1563,10 @@ namespace ShimmerAPI
                 {
                 }
             }
-            // clear all plot checkboxes
-            foreach (CheckBox cb in CheckBoxArrayGroup1)
-            {
-                cb.Checked = false;
-                cb.Visible = false;
-            }
-
-            foreach (CheckBox cb in CheckBoxArrayGroup2)
-            {
-                cb.Checked = false;
-                cb.Visible = false;
-            }
-
-            foreach (CheckBox cb in CheckBoxArrayGroup3)
-            {
-                cb.Checked = false;
-                cb.Visible = false;
-            }
+            // clear all signal selections
+            SelectedSignalNameGroup1.Clear();
+            SelectedSignalNameGroup2.Clear();
+            SelectedSignalNameGroup3.Clear();
 
         }
 
@@ -2751,13 +2550,14 @@ namespace ShimmerAPI
                             }
                             signalNamesandFormats.Add(names[i] + " " + formats[i]);
                         }
-                        SetupCheckboxesGroup1(objectCluster.GetShimmerID(), signalNamesandFormatsRaw.ToArray(), signalNamesandFormatsCal.ToArray());
-                        SetupCheckboxesGroup2(objectCluster.GetShimmerID(), signalNamesandFormatsRaw.ToArray(), signalNamesandFormatsCal.ToArray());
-                        SetupCheckboxesGroup3(objectCluster.GetShimmerID(), signalNamesandFormatsRaw.ToArray(), signalNamesandFormatsCal.ToArray());
+                        // Setup graphs
                         SetupGraph1(data.Count, signalNamesandFormats.ToArray());
                         SetupGraph2(data.Count, signalNamesandFormats.ToArray());
                         SetupGraph3(data.Count, signalNamesandFormats.ToArray());
                         ShimmerIdSetup.Add(objectCluster.GetShimmerID());
+
+                        // Load saved signal selections (best-effort)
+                        LoadSavedSignalSelections(signalNamesandFormats);
 
                         FirstTime = false;
                     }
@@ -3126,74 +2926,33 @@ namespace ShimmerAPI
 
         }
 
-        private void textBox_udpPort_TextChanged(object sender, EventArgs e)
-        {
-            uint outPort;
-            uint.TryParse(textBox_udpPort.Text,out outPort);
-            if (outPort > 80 && outPort < 65500)
-                udpPortNo = (int)outPort;
-            else
-            {
-                textBox_udpPort.Text = outPort.ToString();
-            }
-        }
+        // Removed - textBox_udpPort no longer exists, use UDP Settings Dialog instead
+        //private void textBox_udpPort_TextChanged(object sender, EventArgs e)
+        //{
+        //    uint outPort;
+        //    uint.TryParse(textBox_udpPort.Text,out outPort);
+        //    if (outPort > 80 && outPort < 65500)
+        //        udpPortNo = (int)outPort;
+        //    else
+        //    {
+        //        textBox_udpPort.Text = outPort.ToString();
+        //    }
+        //}
 
         bool udpMarkersEnabled = true;
-        private void checkBox91_CheckedChanged(object sender, EventArgs e)
-        {
-            udpMarkersEnabled = checkBox91.Checked;
-            textBox_udpPort.Enabled = udpMarkersEnabled;
 
-        }
+        // Removed - checkBox91 no longer exists, use UDP Settings Dialog instead
+        //private void checkBox91_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    udpMarkersEnabled = checkBox91.Checked;
+        //    textBox_udpPort.Enabled = udpMarkersEnabled;
+        //}
 
         #region Manual Marker Functionality
 
-        private void InitializeManualMarkerControls()
-        {
-            // Create GroupBox
-            groupBoxManualMarker = new GroupBox();
-            groupBoxManualMarker.Text = "UDP Marker Output";
-            groupBoxManualMarker.Size = new Size(200, 120);
-            groupBoxManualMarker.Location = new Point(this.Width - 220, 20); // Top right corner
-
-            // Create IP Label and TextBox
-            labelMarkerIP = new System.Windows.Forms.Label();
-            labelMarkerIP.Text = "IP Address:";
-            labelMarkerIP.Location = new Point(10, 20);
-            labelMarkerIP.AutoSize = true;
-
-            textBoxMarkerIP = new TextBox();
-            textBoxMarkerIP.Location = new Point(10, 40);
-            textBoxMarkerIP.Size = new Size(180, 20);
-
-            // Create Port Label and TextBox
-            labelMarkerPort = new System.Windows.Forms.Label();
-            labelMarkerPort.Text = "Port:";
-            labelMarkerPort.Location = new Point(10, 65);
-            labelMarkerPort.AutoSize = true;
-
-            textBoxMarkerPort = new TextBox();
-            textBoxMarkerPort.Location = new Point(50, 63);
-            textBoxMarkerPort.Size = new Size(60, 20);
-
-            // Create Send Button
-            buttonSendMarker = new Button();
-            buttonSendMarker.Text = "Send Marker (230)";
-            buttonSendMarker.Location = new Point(10, 88);
-            buttonSendMarker.Size = new Size(180, 23);
-            buttonSendMarker.Click += ButtonSendMarker_Click;
-
-            // Add controls to GroupBox
-            groupBoxManualMarker.Controls.Add(labelMarkerIP);
-            groupBoxManualMarker.Controls.Add(textBoxMarkerIP);
-            groupBoxManualMarker.Controls.Add(labelMarkerPort);
-            groupBoxManualMarker.Controls.Add(textBoxMarkerPort);
-            groupBoxManualMarker.Controls.Add(buttonSendMarker);
-
-            // Add GroupBox to Form
-            this.Controls.Add(groupBoxManualMarker);
-            groupBoxManualMarker.BringToFront();
-        }
+        // InitializeManualMarkerControls() - REMOVED
+        // Controls are now defined in Control.Designer.cs (groupBoxManualMarker and children)
+        // No longer need to dynamically create controls at runtime
 
         private void LoadManualMarkerSettings()
         {
@@ -3209,6 +2968,9 @@ namespace ShimmerAPI
                 textBoxMarkerIP.Text = "127.0.0.1";
                 textBoxMarkerPort.Text = "5501";
             }
+
+            // Update status display after loading settings
+            UpdateUDPStatusDisplay();
         }
 
         private void SaveManualMarkerSettings()
@@ -3257,6 +3019,19 @@ namespace ShimmerAPI
                     // Log the send
                     ErrorLogger.LogInfo($"UDP marker sent: {description} (value={markerValue}) to {ip}:{port}", "Control.SendUDPMarker");
 
+                    // Log outbound marker to marker log
+                    if (markerLogger != null)
+                    {
+                        try
+                        {
+                            markerLogger.LogOutboundMarker(markerValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error logging outbound marker", ex, "Control.SendUDPMarker");
+                        }
+                    }
+
                     // Also write to CSV file if logging is active
                     if (WriteToFile != null)
                     {
@@ -3297,7 +3072,213 @@ namespace ShimmerAPI
             SendUDPMarker(230, "Manual marker");
         }
 
+        /// <summary>
+        /// Event handler for UDP messages received
+        /// The UdpListener handles writing to file, this is for any additional processing
+        /// </summary>
+        private void UDP_NewMessageReceived(object sender, MyMessageArgs e)
+        {
+            try
+            {
+                // The UdpListener already writes the marker to file via SetWriteToFile
+                // This handler is for any additional UI updates or processing
+                System.Diagnostics.Debug.WriteLine($"UDP marker received: {BitConverter.ToString(e.data)}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error processing UDP message: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Restarts the UDP listener gracefully with a new port
+        /// </summary>
+        private void RestartUDPListener(int newPort)
+        {
+            try
+            {
+                // Stop existing listener
+                if (udpListener != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Stopping UDP listener on port {udpPortNo}");
+                    udpListener.StopListener();
+                    udpListener.Dispose();
+                    udpListener = null;
+                }
+
+                // Update port
+                udpPortNo = newPort;
+
+                // Start new listener if markers are enabled
+                if (udpMarkersEnabled)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Starting UDP listener on port {udpPortNo}");
+                    udpListener = new UDPListener(udpPortNo);
+                    udpListener.SetWriteToFile(WriteToFile);
+                    udpListener.NewMessageReceived += new EventHandler<MyMessageArgs>(UDP_NewMessageReceived);
+                    udpListener.StartListener(4);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error restarting UDP listener: {ex.Message}");
+                MessageBox.Show($"Failed to restart UDP listener on port {newPort}: {ex.Message}\n\nPlease try a different port.",
+                    "UDP Listener Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>
+        /// Updates the UDP status display label
+        /// </summary>
+        private void UpdateUDPStatusDisplay()
+        {
+            if (labelUDPStatus != null)
+            {
+                if (udpMarkersEnabled)
+                {
+                    string outIP = textBoxMarkerIP != null ? textBoxMarkerIP.Text : "127.0.0.1";
+                    string outPort = textBoxMarkerPort != null ? textBoxMarkerPort.Text : "5501";
+                    labelUDPStatus.Text = $"UDP Markers: Enabled\n" +
+                                         $"Inbound: Port {udpPortNo}\n" +
+                                         $"Outbound: {outIP}:{outPort}";
+                    labelUDPStatus.ForeColor = System.Drawing.Color.Green;
+                }
+                else
+                {
+                    labelUDPStatus.Text = "UDP Markers: Disabled\n(Click to configure)";
+                    labelUDPStatus.ForeColor = System.Drawing.Color.Gray;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the UDP marker settings dialog
+        /// </summary>
+        private void OpenUDPMarkerSettings()
+        {
+            try
+            {
+                // Get current settings
+                string currentIP = textBoxMarkerIP != null ? textBoxMarkerIP.Text : "127.0.0.1";
+                string currentPortText = textBoxMarkerPort != null ? textBoxMarkerPort.Text : "5501";
+                int.TryParse(currentPortText, out int currentOutboundPort);
+                if (currentOutboundPort == 0) currentOutboundPort = 5501;
+
+                // Open settings dialog
+                var dialog = new UdpMarkerSettingsDialog(
+                    udpMarkersEnabled,
+                    udpPortNo,
+                    currentIP,
+                    currentOutboundPort);
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Update enabled state
+                    bool wasEnabled = udpMarkersEnabled;
+                    udpMarkersEnabled = dialog.MarkersEnabled;
+
+                    // Update outbound settings
+                    if (textBoxMarkerIP != null)
+                    {
+                        textBoxMarkerIP.Text = dialog.OutboundIP;
+                    }
+                    if (textBoxMarkerPort != null)
+                    {
+                        textBoxMarkerPort.Text = dialog.OutboundPort.ToString();
+                    }
+
+                    // Restart listener if port changed or enable state changed
+                    if (dialog.InboundPort != udpPortNo || wasEnabled != udpMarkersEnabled)
+                    {
+                        RestartUDPListener(dialog.InboundPort);
+                    }
+
+                    // Save settings
+                    Properties.Settings.Default.UDPenabled = udpMarkersEnabled;
+                    Properties.Settings.Default.UDPport = dialog.InboundPort.ToString();
+                    Properties.Settings.Default.ManualMarkerIP = dialog.OutboundIP;
+                    Properties.Settings.Default.ManualMarkerPort = dialog.OutboundPort.ToString();
+                    Properties.Settings.Default.Save();
+
+                    // Update status display
+                    UpdateUDPStatusDisplay();
+
+                    System.Diagnostics.Debug.WriteLine($"UDP settings updated: Enabled={udpMarkersEnabled}, InPort={dialog.InboundPort}, OutIP={dialog.OutboundIP}, OutPort={dialog.OutboundPort}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error opening UDP settings dialog: {ex.Message}");
+                MessageBox.Show($"Error: {ex.Message}", "Settings Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         #endregion
+
+        private void button_ConfigureSignals_Click(object sender, EventArgs e)
+        {
+            OpenSignalSelectionDialog();
+        }
+
+        private void configureSignalDisplayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenSignalSelectionDialog();
+        }
+
+        private void configureUDPMarkersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenUDPMarkerSettings();
+        }
+
+        private void labelExGLeadOffDetection_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelLeadOffStatus4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelLeadOffStatus3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelLeadOffStatus5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelLeadOffStatus2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxLeadOffStatus5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxLeadOffStatus4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxLeadOffStatus2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxLeadOffStatus3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelLeadOffStatus1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

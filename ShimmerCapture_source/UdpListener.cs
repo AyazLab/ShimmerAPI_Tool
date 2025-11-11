@@ -16,6 +16,7 @@ class UDPListener : IDisposable
     private UdpClient listener = null;
 
     private Logging writeToFile = null;
+    private MarkerLogger markerLogger = null;
     private bool disposed = false;
 
     //constructor
@@ -23,6 +24,7 @@ class UDPListener : IDisposable
     {
         this.listening = false;
         writeToFile = null;
+        markerLogger = null;
     }
 
     public UDPListener(int m_portToListen)
@@ -30,11 +32,17 @@ class UDPListener : IDisposable
         this.m_portToListen = m_portToListen;
         this.listening = false;
         writeToFile = null;
+        markerLogger = null;
     }
 
     public void SetWriteToFile(Logging _writeToFileRef)
     {
         writeToFile = _writeToFileRef;
+    }
+
+    public void SetMarkerLogger(MarkerLogger _markerLogger)
+    {
+        markerLogger = _markerLogger;
     }
 
     public void StartListener(int exceptedMessageLength)
@@ -101,6 +109,19 @@ class UDPListener : IDisposable
                 {
                     Console.WriteLine("Waiting for UDP broadcast to port " + m_portToListen);
                     byte[] bytes = listener.Receive(ref groupEP);
+
+                    // Log inbound marker to marker log (before writing to main data file)
+                    if (markerLogger != null)
+                    {
+                        try
+                        {
+                            markerLogger.LogInboundMarker(bytes[0]);
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error logging inbound marker", ex, "UDPListener.ListenForUDPPackages");
+                        }
+                    }
 
                     if (writeToFile != null)
                     {
