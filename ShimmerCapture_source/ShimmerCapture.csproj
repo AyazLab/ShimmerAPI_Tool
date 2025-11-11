@@ -134,7 +134,9 @@
     <Compile Include="Configure.Designer.cs">
       <DependentUpon>Configure.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExgConfigure.cs" />
+    <Compile Include="ExgConfigure.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ExgConfigure.Designer.cs">
       <DependentUpon>ExgConfigure.cs</DependentUpon>
     </Compile>

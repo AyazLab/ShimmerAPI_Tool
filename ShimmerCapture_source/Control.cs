@@ -3152,9 +3152,9 @@ namespace ShimmerAPI
         {
             // Create GroupBox
             groupBoxManualMarker = new GroupBox();
-            groupBoxManualMarker.Text = "Manual Marker";
+            groupBoxManualMarker.Text = "UDP Marker Output";
             groupBoxManualMarker.Size = new Size(200, 120);
-            groupBoxManualMarker.Location = new Point(this.Width - 220, 60); // Top right corner
+            groupBoxManualMarker.Location = new Point(this.Width - 220, 20); // Top right corner
 
             // Create IP Label and TextBox
             labelMarkerIP = new System.Windows.Forms.Label();
