@@ -2880,6 +2880,7 @@ namespace ShimmerAPI
             objectCluster.RawTimeStamp = (int)newPacket[iTimeStamp];
             objectCluster.Add(ShimmerConfiguration.SignalNames.TIMESTAMP, ShimmerConfiguration.SignalFormats.RAW, ShimmerConfiguration.SignalUnits.NoUnits, newPacket[iTimeStamp]);
             double calibratedTS = CalibrateTimeStamp(newPacket[iTimeStamp]);
+            objectCluster.elapsedTimer = (long)calibratedTS;
             objectCluster.Add(ShimmerConfiguration.SignalNames.TIMESTAMP, ShimmerConfiguration.SignalFormats.CAL, ShimmerConfiguration.SignalUnits.MilliSeconds, calibratedTS);
             double time = (DateTime.UtcNow - UnixEpoch).TotalMilliseconds;
             if (FirstSystemTimestamp)

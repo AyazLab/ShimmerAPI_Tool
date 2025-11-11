@@ -293,9 +293,10 @@ namespace ShimmerAPI
         {
             if (!usingLinux)
             {
+                // Configure ZedGraphControl2 and add to groupBoxGraph2
                 this.ZedGraphControl2.BackColor = System.Drawing.SystemColors.AppWorkspace;
                 this.ZedGraphControl2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-                this.ZedGraphControl2.Location = new System.Drawing.Point(31, 443);
+                this.ZedGraphControl2.Dock = System.Windows.Forms.DockStyle.Fill;
                 this.ZedGraphControl2.Name = "ZedGraphControl2";
                 this.ZedGraphControl2.ScrollGrace = 0D;
                 this.ZedGraphControl2.ScrollMaxX = 0D;
@@ -304,14 +305,13 @@ namespace ShimmerAPI
                 this.ZedGraphControl2.ScrollMinX = 0D;
                 this.ZedGraphControl2.ScrollMinY = 0D;
                 this.ZedGraphControl2.ScrollMinY2 = 0D;
-                this.ZedGraphControl2.Size = new System.Drawing.Size(490, 297);
-                this.ZedGraphControl2.TabIndex = 45;
-                this.ZedGraphControl2.Visible = false;
-                this.Controls.Add(this.ZedGraphControl2);
+                this.ZedGraphControl2.TabIndex = 0;
+                this.groupBoxGraph2.Controls.Add(this.ZedGraphControl2);
 
+                // Configure ZedGraphControl3 and add to groupBoxGraph3
                 this.ZedGraphControl3.BackColor = System.Drawing.SystemColors.AppWorkspace;
                 this.ZedGraphControl3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-                this.ZedGraphControl3.Location = new System.Drawing.Point(31, 756);
+                this.ZedGraphControl3.Dock = System.Windows.Forms.DockStyle.Fill;
                 this.ZedGraphControl3.Name = "ZedGraphControl3";
                 this.ZedGraphControl3.ScrollGrace = 0D;
                 this.ZedGraphControl3.ScrollMaxX = 0D;
@@ -320,25 +320,35 @@ namespace ShimmerAPI
                 this.ZedGraphControl3.ScrollMinX = 0D;
                 this.ZedGraphControl3.ScrollMinY = 0D;
                 this.ZedGraphControl3.ScrollMinY2 = 0D;
-                this.ZedGraphControl3.Size = new System.Drawing.Size(490, 297);
-                this.ZedGraphControl3.TabIndex = 80;
-                this.ZedGraphControl3.Visible = false;
-                this.Controls.Add(this.ZedGraphControl3);
+                this.ZedGraphControl3.TabIndex = 0;
+                this.groupBoxGraph3.Controls.Add(this.ZedGraphControl3);
             }
             ZedGraphControl1.GraphPane.CurveList.Clear();
             MyPaneGraph1 = ZedGraphControl1.GraphPane;
             ZedGraphControl1.IsShowPointValues = false;
             ZedGraphControl1.IsShowCursorValues = false;
+            // Disable zoom via scroll wheel
+            ZedGraphControl1.IsEnableHZoom = false;
+            ZedGraphControl1.IsEnableVZoom = false;
+            ZedGraphControl1.IsEnableWheelZoom = false;
 
             ZedGraphControl2.GraphPane.CurveList.Clear();
             MyPaneGraph2 = ZedGraphControl2.GraphPane;
             ZedGraphControl2.IsShowPointValues = false;
             ZedGraphControl2.IsShowCursorValues = false;
+            // Disable zoom via scroll wheel
+            ZedGraphControl2.IsEnableHZoom = false;
+            ZedGraphControl2.IsEnableVZoom = false;
+            ZedGraphControl2.IsEnableWheelZoom = false;
 
             ZedGraphControl3.GraphPane.CurveList.Clear();
             MyPaneGraph3 = ZedGraphControl3.GraphPane;
             ZedGraphControl3.IsShowPointValues = false;
             ZedGraphControl3.IsShowCursorValues = false;
+            // Disable zoom via scroll wheel
+            ZedGraphControl3.IsEnableHZoom = false;
+            ZedGraphControl3.IsEnableVZoom = false;
+            ZedGraphControl3.IsEnableWheelZoom = false;
 
             MyPaneGraph1.XAxis.IsVisible = false;
             MyPaneGraph1.YAxis.Title.Text = "Amplitude";
@@ -346,6 +356,9 @@ namespace ShimmerAPI
             MyPaneGraph1.Legend.Position = LegendPos.Float;
             MyPaneGraph1.Legend.Location = new Location(0f, 0f, CoordType.ChartFraction, AlignH.Left, AlignV.Top);
             MyPaneGraph1.YAxis.MajorGrid.IsZeroLine = false;
+            // Enable auto-scaling for Y-axis
+            MyPaneGraph1.YAxis.Scale.MaxAuto = true;
+            MyPaneGraph1.YAxis.Scale.MinAuto = true;
 
             MyPaneGraph2.XAxis.IsVisible = false;
             MyPaneGraph2.YAxis.Title.Text = "Amplitude";
@@ -353,6 +366,9 @@ namespace ShimmerAPI
             MyPaneGraph2.Legend.Position = LegendPos.Float;
             MyPaneGraph2.Legend.Location = new Location(0f, 0f, CoordType.ChartFraction, AlignH.Left, AlignV.Top);
             MyPaneGraph2.YAxis.MajorGrid.IsZeroLine = false;
+            // Enable auto-scaling for Y-axis
+            MyPaneGraph2.YAxis.Scale.MaxAuto = true;
+            MyPaneGraph2.YAxis.Scale.MinAuto = true;
 
             MyPaneGraph3.XAxis.IsVisible = false;
             MyPaneGraph3.YAxis.Title.Text = "Amplitude";
@@ -360,11 +376,20 @@ namespace ShimmerAPI
             MyPaneGraph3.Legend.Position = LegendPos.Float;
             MyPaneGraph3.Legend.Location = new Location(0f, 0f, CoordType.ChartFraction, AlignH.Left, AlignV.Top);
             MyPaneGraph3.YAxis.MajorGrid.IsZeroLine = false;
+            // Enable auto-scaling for Y-axis
+            MyPaneGraph3.YAxis.Scale.MaxAuto = true;
+            MyPaneGraph3.YAxis.Scale.MinAuto = true;
 
             // Manual Marker UI is now defined in Designer (no longer dynamically created)
             // InitializeManualMarkerControls(); // Removed - controls now in Designer
             // Load saved settings
             LoadManualMarkerSettings();
+
+            // Initial graph sizing
+            if (!usingLinux)
+            {
+                ResizeGraphs();
+            }
         }
 
         private void FormResize(object sender, EventArgs e)
@@ -401,6 +426,12 @@ namespace ShimmerAPI
             ZedGraphControl1.Size = new System.Drawing.Size(this.Size.Width - scale3, ZedGraphControl1.Size.Height);
             ZedGraphControl2.Size = new System.Drawing.Size(this.Size.Width - scale3, ZedGraphControl2.Size.Height);
             ZedGraphControl3.Size = new System.Drawing.Size(this.Size.Width - scale3, ZedGraphControl3.Size.Height);*/
+
+            // Resize graphs dynamically based on form size
+            if (!usingLinux)
+            {
+                ResizeGraphs();
+            }
         }
 
         public void ShowChannelLabels(List<String> names)
@@ -896,6 +927,14 @@ namespace ShimmerAPI
                 //System.Console.WriteLine("j: " + j + "" + "CountXAxisDataPoints: " + CountXAxisDataPoints + "" + "data[j]: " + data[j]);
             }
 
+            // First, hide ALL curves in Graph1
+            for (int j = 0; j < MyPaneGraph1.CurveList.Count; j++)
+            {
+                MyPaneGraph1.CurveList[j].IsVisible = false;
+                MyPaneGraph1.CurveList[j].Label.IsVisible = false;
+            }
+
+            // Then, show only the selected curves in Graph1
             for (int k = 0; k < SelectedSignalNameGroup1.Count; k++)
             {
                 int index = MyPaneGraph1.CurveList.IndexOf(SelectedSignalNameGroup1[k]);
@@ -908,6 +947,14 @@ namespace ShimmerAPI
 
             if (IsGraph2Visible)
             {
+                // First, hide ALL curves in Graph2
+                for (int j = 0; j < MyPaneGraph2.CurveList.Count; j++)
+                {
+                    MyPaneGraph2.CurveList[j].IsVisible = false;
+                    MyPaneGraph2.CurveList[j].Label.IsVisible = false;
+                }
+
+                // Then, show only the selected curves in Graph2
                 for (int k = 0; k < SelectedSignalNameGroup2.Count; k++)
                 {
                     int index = MyPaneGraph2.CurveList.IndexOf(SelectedSignalNameGroup2[k]);
@@ -921,6 +968,14 @@ namespace ShimmerAPI
 
             if (IsGraph3Visible)
             {
+                // First, hide ALL curves in Graph3
+                for (int j = 0; j < MyPaneGraph3.CurveList.Count; j++)
+                {
+                    MyPaneGraph3.CurveList[j].IsVisible = false;
+                    MyPaneGraph3.CurveList[j].Label.IsVisible = false;
+                }
+
+                // Then, show only the selected curves in Graph3
                 for (int k = 0; k < SelectedSignalNameGroup3.Count; k++)
                 {
                     int index = MyPaneGraph3.CurveList.IndexOf(SelectedSignalNameGroup3[k]);
@@ -1095,36 +1150,82 @@ namespace ShimmerAPI
             Delimeter = format;
         }
 
+        private void ResizeGraphs()
+        {
+            if (usingLinux)
+                return;
+
+            // Calculate number of visible graphs
+            int visibleGraphs = 1; // Graph 1 is always visible
+            if (IsGraph2Visible) visibleGraphs++;
+            if (IsGraph3Visible) visibleGraphs++;
+
+            // Calculate available width (form width minus margins)
+            int formWidth = this.ClientSize.Width;
+            int margin = 31; // Left margin
+            int spacing = 10; // Space between graphs
+            int availableWidth = formWidth - margin - (spacing * (visibleGraphs - 1));
+            int graphWidth = availableWidth / visibleGraphs;
+
+            // Calculate available height (form height minus top components)
+            int graphTop = groupBoxGraph1.Top;
+            int availableHeight = this.ClientSize.Height - graphTop - 20; // 20px bottom margin
+
+            // Position and size Graph 1
+            groupBoxGraph1.Location = new System.Drawing.Point(margin, graphTop);
+            groupBoxGraph1.Size = new System.Drawing.Size(graphWidth, availableHeight);
+
+            // Position and size Graph 2 if visible
+            if (IsGraph2Visible)
+            {
+                int graph2Left = margin + graphWidth + spacing;
+                groupBoxGraph2.Location = new System.Drawing.Point(graph2Left, graphTop);
+                groupBoxGraph2.Size = new System.Drawing.Size(graphWidth, availableHeight);
+            }
+
+            // Position and size Graph 3 if visible
+            if (IsGraph3Visible)
+            {
+                int graph3Left = margin + (graphWidth + spacing) * 2;
+                groupBoxGraph3.Location = new System.Drawing.Point(graph3Left, graphTop);
+                groupBoxGraph3.Size = new System.Drawing.Size(graphWidth, availableHeight);
+            }
+        }
+
         private void buttonAddGraph_Click(object sender, EventArgs e)
         {
             if (IsGraph2Visible && (!IsGraph3Visible))
             {
                 IsGraph3Visible = true;
-                ZedGraphControl3.Visible = true;
+                groupBoxGraph3.Visible = true;
                 // Signal selection will be handled by SignalSelectionDialog
 
                 if (!usingLinux)
                 {
-                    int w = this.Size.Width;
-                    if (this.Size.Height < 1200)
+                    // Expand form width to accommodate 3 graphs
+                    int minWidth = 1400;
+                    if (this.Size.Width < minWidth)
                     {
-                        this.Size = new System.Drawing.Size(w, 1200);
+                        this.Size = new System.Drawing.Size(minWidth, this.Size.Height);
                     }
+                    ResizeGraphs();
                 }
             }
             else if (!IsGraph2Visible)
             {
                 IsGraph2Visible = true;
-                ZedGraphControl2.Visible = true;
+                groupBoxGraph2.Visible = true;
                 // Signal selection will be handled by SignalSelectionDialog
 
                 if (!usingLinux)
                 {
-                    int w = this.Size.Width;
-                    if (this.Size.Height < 797)
+                    // Expand form width to accommodate 2 graphs
+                    int minWidth = 1000;
+                    if (this.Size.Width < minWidth)
                     {
-                        this.Size = new System.Drawing.Size(w, 797);
+                        this.Size = new System.Drawing.Size(minWidth, this.Size.Height);
                     }
+                    ResizeGraphs();
                 }
             }
         }
@@ -1133,15 +1234,23 @@ namespace ShimmerAPI
         {
             if (IsGraph3Visible)
             {
-                ZedGraphControl3.Visible = false;
+                groupBoxGraph3.Visible = false;
                 IsGraph3Visible = false;
                 SelectedSignalNameGroup3.Clear();
+                if (!usingLinux)
+                {
+                    ResizeGraphs();
+                }
             }
             else if (IsGraph2Visible)
             {
-                ZedGraphControl2.Visible = false;
+                groupBoxGraph2.Visible = false;
                 IsGraph2Visible = false;
                 SelectedSignalNameGroup2.Clear();
+                if (!usingLinux)
+                {
+                    ResizeGraphs();
+                }
             }
         }
 
@@ -1310,10 +1419,14 @@ namespace ShimmerAPI
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string filename = Path.Combine(subFolderPath, $"{textBoxSubj.Text}_{timestamp}.csv");
 
+            // Get device info for both data and marker logs
+            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string deviceInfo = ShimmerDevice != null ? ShimmerDevice.GetDeviceName() : "N/A";
+            string deviceSerial = ShimmerDevice != null ? ShimmerDevice.GetShimmerAddress() : "N/A";
+
             try
             {
-                string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                WriteToFile = new Logging(filename, ",", textBoxSubj.Text, version);
+                WriteToFile = new Logging(filename, ",", textBoxSubj.Text, version, deviceInfo, deviceSerial);
                 ToolStripMenuItemSaveToCSV.Checked = true;
                 ErrorLogger.LogInfo($"Auto-started CSV logging: {filename}", "Control.buttonStart_Click");
             }
@@ -1327,9 +1440,6 @@ namespace ShimmerAPI
             try
             {
                 string markerFilename = Path.Combine(subFolderPath, $"{textBoxSubj.Text}_{timestamp}_markers.csv");
-                string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                string deviceInfo = ShimmerDevice != null ? ShimmerDevice.GetDeviceName() : "N/A";
-                string deviceSerial = ShimmerDevice != null ? ShimmerDevice.GetShimmerAddress() : "N/A";
 
                 markerLogger = new MarkerLogger(markerFilename, textBoxSubj.Text, deviceInfo, version, deviceSerial);
                 ErrorLogger.LogInfo($"Marker log file created: {markerFilename}", "Control.buttonStart_Click");
@@ -3281,6 +3391,7 @@ namespace ShimmerAPI
         {
 
         }
+
     }
 
 

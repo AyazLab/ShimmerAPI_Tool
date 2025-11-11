@@ -34,8 +34,10 @@
             this.buttonConnect = new System.Windows.Forms.Button();
             this.textBoxShimmerState = new System.Windows.Forms.TextBox();
             this.labelState = new System.Windows.Forms.Label();
+            this.groupBoxGraph1 = new System.Windows.Forms.GroupBox();
             this.ZedGraphControl1 = new ZedGraph.ZedGraphControl();
-            this.labelComPort = new System.Windows.Forms.Label();
+            this.groupBoxGraph2 = new System.Windows.Forms.GroupBox();
+            this.groupBoxGraph3 = new System.Windows.Forms.GroupBox();
             this.comboBoxComPorts = new System.Windows.Forms.ComboBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripItemFile = new System.Windows.Forms.ToolStripDropDownButton();
@@ -79,6 +81,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBoxSubj = new System.Windows.Forms.TextBox();
+            this.groupBoxExGLeadOff = new System.Windows.Forms.GroupBox();
+            this.groupBoxPPG = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -92,8 +96,12 @@
             this.textBoxMarkerPort = new System.Windows.Forms.TextBox();
             this.buttonSendMarker = new System.Windows.Forms.Button();
             this.button_ConfigureSignals = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.groupBoxGraph1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.groupBoxExGLeadOff.SuspendLayout();
+            this.groupBoxPPG.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -115,7 +123,7 @@
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(443, 81);
+            this.buttonConnect.Location = new System.Drawing.Point(34, 88);
             this.buttonConnect.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(251, 54);
@@ -145,11 +153,22 @@
             this.labelState.TabIndex = 121;
             this.labelState.Text = "Device State:";
             // 
+            // groupBoxGraph1
+            // 
+            this.groupBoxGraph1.Controls.Add(this.ZedGraphControl1);
+            this.groupBoxGraph1.Location = new System.Drawing.Point(31, 480);
+            this.groupBoxGraph1.Name = "groupBoxGraph1";
+            this.groupBoxGraph1.Size = new System.Drawing.Size(450, 300);
+            this.groupBoxGraph1.TabIndex = 122;
+            this.groupBoxGraph1.TabStop = false;
+            this.groupBoxGraph1.Text = "Graph 1";
+            // 
             // ZedGraphControl1
             // 
             this.ZedGraphControl1.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ZedGraphControl1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ZedGraphControl1.Location = new System.Drawing.Point(63, 506);
+            this.ZedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ZedGraphControl1.Location = new System.Drawing.Point(3, 34);
             this.ZedGraphControl1.Margin = new System.Windows.Forms.Padding(11, 9, 11, 9);
             this.ZedGraphControl1.Name = "ZedGraphControl1";
             this.ZedGraphControl1.ScrollGrace = 0D;
@@ -159,26 +178,36 @@
             this.ZedGraphControl1.ScrollMinX = 0D;
             this.ZedGraphControl1.ScrollMinY = 0D;
             this.ZedGraphControl1.ScrollMinY2 = 0D;
-            this.ZedGraphControl1.Size = new System.Drawing.Size(1307, 708);
-            this.ZedGraphControl1.TabIndex = 120;
+            this.ZedGraphControl1.Size = new System.Drawing.Size(444, 263);
+            this.ZedGraphControl1.TabIndex = 0;
             this.ZedGraphControl1.Load += new System.EventHandler(this.ZedGraphControl1_Load);
             // 
-            // labelComPort
+            // groupBoxGraph2
             // 
-            this.labelComPort.AutoSize = true;
-            this.labelComPort.Location = new System.Drawing.Point(14, 37);
-            this.labelComPort.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
-            this.labelComPort.Name = "labelComPort";
-            this.labelComPort.Size = new System.Drawing.Size(275, 32);
-            this.labelComPort.TabIndex = 113;
-            this.labelComPort.Text = "Bluetooth COM Port:";
-            this.labelComPort.Click += new System.EventHandler(this.labelComPort_Click);
+            this.groupBoxGraph2.Location = new System.Drawing.Point(490, 480);
+            this.groupBoxGraph2.Name = "groupBoxGraph2";
+            this.groupBoxGraph2.Size = new System.Drawing.Size(450, 300);
+            this.groupBoxGraph2.TabIndex = 123;
+            this.groupBoxGraph2.TabStop = false;
+            this.groupBoxGraph2.Text = "Graph 2";
+            this.groupBoxGraph2.Visible = false;
+            // 
+            // groupBoxGraph3
+            // 
+            this.groupBoxGraph3.Location = new System.Drawing.Point(949, 480);
+            this.groupBoxGraph3.Name = "groupBoxGraph3";
+            this.groupBoxGraph3.Size = new System.Drawing.Size(450, 300);
+            this.groupBoxGraph3.TabIndex = 124;
+            this.groupBoxGraph3.TabStop = false;
+            this.groupBoxGraph3.Text = "Graph 3";
+            this.groupBoxGraph3.Visible = false;
             // 
             // comboBoxComPorts
             // 
+            this.comboBoxComPorts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxComPorts.FormattingEnabled = true;
             this.comboBoxComPorts.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.comboBoxComPorts.Location = new System.Drawing.Point(34, 87);
+            this.comboBoxComPorts.Location = new System.Drawing.Point(34, 39);
             this.comboBoxComPorts.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.comboBoxComPorts.Name = "comboBoxComPorts";
             this.comboBoxComPorts.Size = new System.Drawing.Size(248, 39);
@@ -196,7 +225,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(2369, 52);
+            this.toolStrip1.Size = new System.Drawing.Size(2172, 52);
             this.toolStrip1.TabIndex = 38;
             this.toolStrip1.Text = "Check For Updates";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
@@ -330,7 +359,7 @@
             // 
             // buttonAddGraph
             // 
-            this.buttonAddGraph.Location = new System.Drawing.Point(248, 434);
+            this.buttonAddGraph.Location = new System.Drawing.Point(248, 413);
             this.buttonAddGraph.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonAddGraph.Name = "buttonAddGraph";
             this.buttonAddGraph.Size = new System.Drawing.Size(89, 54);
@@ -341,7 +370,7 @@
             // 
             // buttonRemoveGraph
             // 
-            this.buttonRemoveGraph.Location = new System.Drawing.Point(666, 434);
+            this.buttonRemoveGraph.Location = new System.Drawing.Point(666, 413);
             this.buttonRemoveGraph.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonRemoveGraph.Name = "buttonRemoveGraph";
             this.buttonRemoveGraph.Size = new System.Drawing.Size(89, 54);
@@ -353,7 +382,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(75, 447);
+            this.label1.Location = new System.Drawing.Point(75, 426);
             this.label1.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(151, 32);
@@ -363,7 +392,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(440, 448);
+            this.label2.Location = new System.Drawing.Point(440, 427);
             this.label2.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(205, 32);
@@ -375,10 +404,10 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 1496);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 919);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(4, 0, 37, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(2369, 54);
+            this.statusStrip1.Size = new System.Drawing.Size(2172, 54);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -391,7 +420,7 @@
             // buttonReload
             // 
             this.buttonReload.Enabled = false;
-            this.buttonReload.Location = new System.Drawing.Point(302, 82);
+            this.buttonReload.Location = new System.Drawing.Point(300, 34);
             this.buttonReload.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonReload.Name = "buttonReload";
             this.buttonReload.Size = new System.Drawing.Size(69, 54);
@@ -413,7 +442,7 @@
             // 
             // textBoxLeadOffStatus1
             // 
-            this.textBoxLeadOffStatus1.Location = new System.Drawing.Point(809, 330);
+            this.textBoxLeadOffStatus1.Location = new System.Drawing.Point(20, 100);
             this.textBoxLeadOffStatus1.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.textBoxLeadOffStatus1.Name = "textBoxLeadOffStatus1";
             this.textBoxLeadOffStatus1.Size = new System.Drawing.Size(88, 38);
@@ -421,7 +450,7 @@
             // 
             // textBoxLeadOffStatus3
             // 
-            this.textBoxLeadOffStatus3.Location = new System.Drawing.Point(1028, 330);
+            this.textBoxLeadOffStatus3.Location = new System.Drawing.Point(239, 100);
             this.textBoxLeadOffStatus3.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.textBoxLeadOffStatus3.Name = "textBoxLeadOffStatus3";
             this.textBoxLeadOffStatus3.Size = new System.Drawing.Size(88, 38);
@@ -430,7 +459,7 @@
             // 
             // textBoxLeadOffStatus2
             // 
-            this.textBoxLeadOffStatus2.Location = new System.Drawing.Point(917, 330);
+            this.textBoxLeadOffStatus2.Location = new System.Drawing.Point(128, 100);
             this.textBoxLeadOffStatus2.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.textBoxLeadOffStatus2.Name = "textBoxLeadOffStatus2";
             this.textBoxLeadOffStatus2.Size = new System.Drawing.Size(88, 38);
@@ -439,7 +468,7 @@
             // 
             // textBoxLeadOffStatus4
             // 
-            this.textBoxLeadOffStatus4.Location = new System.Drawing.Point(1136, 330);
+            this.textBoxLeadOffStatus4.Location = new System.Drawing.Point(347, 100);
             this.textBoxLeadOffStatus4.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.textBoxLeadOffStatus4.Name = "textBoxLeadOffStatus4";
             this.textBoxLeadOffStatus4.Size = new System.Drawing.Size(88, 38);
@@ -448,7 +477,7 @@
             // 
             // textBoxLeadOffStatus5
             // 
-            this.textBoxLeadOffStatus5.Location = new System.Drawing.Point(1245, 329);
+            this.textBoxLeadOffStatus5.Location = new System.Drawing.Point(456, 99);
             this.textBoxLeadOffStatus5.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.textBoxLeadOffStatus5.Name = "textBoxLeadOffStatus5";
             this.textBoxLeadOffStatus5.Size = new System.Drawing.Size(88, 38);
@@ -459,7 +488,7 @@
             // 
             this.labelLeadOffStatus2.AutoSize = true;
             this.labelLeadOffStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLeadOffStatus2.Location = new System.Drawing.Point(912, 301);
+            this.labelLeadOffStatus2.Location = new System.Drawing.Point(123, 71);
             this.labelLeadOffStatus2.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.labelLeadOffStatus2.Name = "labelLeadOffStatus2";
             this.labelLeadOffStatus2.Size = new System.Drawing.Size(39, 25);
@@ -471,7 +500,7 @@
             // 
             this.labelLeadOffStatus1.AutoSize = true;
             this.labelLeadOffStatus1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLeadOffStatus1.Location = new System.Drawing.Point(804, 301);
+            this.labelLeadOffStatus1.Location = new System.Drawing.Point(15, 71);
             this.labelLeadOffStatus1.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.labelLeadOffStatus1.Name = "labelLeadOffStatus1";
             this.labelLeadOffStatus1.Size = new System.Drawing.Size(37, 25);
@@ -483,7 +512,7 @@
             // 
             this.labelLeadOffStatus5.AutoSize = true;
             this.labelLeadOffStatus5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLeadOffStatus5.Location = new System.Drawing.Point(1241, 301);
+            this.labelLeadOffStatus5.Location = new System.Drawing.Point(452, 71);
             this.labelLeadOffStatus5.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.labelLeadOffStatus5.Name = "labelLeadOffStatus5";
             this.labelLeadOffStatus5.Size = new System.Drawing.Size(50, 25);
@@ -495,7 +524,7 @@
             // 
             this.labelLeadOffStatus3.AutoSize = true;
             this.labelLeadOffStatus3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLeadOffStatus3.Location = new System.Drawing.Point(1021, 301);
+            this.labelLeadOffStatus3.Location = new System.Drawing.Point(232, 71);
             this.labelLeadOffStatus3.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.labelLeadOffStatus3.Name = "labelLeadOffStatus3";
             this.labelLeadOffStatus3.Size = new System.Drawing.Size(34, 25);
@@ -507,7 +536,7 @@
             // 
             this.labelLeadOffStatus4.AutoSize = true;
             this.labelLeadOffStatus4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLeadOffStatus4.Location = new System.Drawing.Point(1131, 301);
+            this.labelLeadOffStatus4.Location = new System.Drawing.Point(342, 71);
             this.labelLeadOffStatus4.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.labelLeadOffStatus4.Name = "labelLeadOffStatus4";
             this.labelLeadOffStatus4.Size = new System.Drawing.Size(37, 25);
@@ -518,17 +547,16 @@
             // labelExGLeadOffDetection
             // 
             this.labelExGLeadOffDetection.AutoSize = true;
-            this.labelExGLeadOffDetection.Location = new System.Drawing.Point(800, 245);
+            this.labelExGLeadOffDetection.Location = new System.Drawing.Point(11, 30);
             this.labelExGLeadOffDetection.Margin = new System.Windows.Forms.Padding(9, 0, 9, 0);
             this.labelExGLeadOffDetection.Name = "labelExGLeadOffDetection";
-            this.labelExGLeadOffDetection.Size = new System.Drawing.Size(315, 32);
+            this.labelExGLeadOffDetection.Size = new System.Drawing.Size(0, 32);
             this.labelExGLeadOffDetection.TabIndex = 146;
-            this.labelExGLeadOffDetection.Text = "ExG Lead-Off Detection";
             this.labelExGLeadOffDetection.Click += new System.EventHandler(this.labelExGLeadOffDetection_Click);
             // 
             // buttonReadDirectory
             // 
-            this.buttonReadDirectory.Location = new System.Drawing.Point(2294, 60);
+            this.buttonReadDirectory.Location = new System.Drawing.Point(1753, 321);
             this.buttonReadDirectory.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.buttonReadDirectory.Name = "buttonReadDirectory";
             this.buttonReadDirectory.Size = new System.Drawing.Size(75, 54);
@@ -540,7 +568,7 @@
             // checkBoxTSACheck
             // 
             this.checkBoxTSACheck.AutoSize = true;
-            this.checkBoxTSACheck.Location = new System.Drawing.Point(1403, 264);
+            this.checkBoxTSACheck.Location = new System.Drawing.Point(1226, 339);
             this.checkBoxTSACheck.Margin = new System.Windows.Forms.Padding(5);
             this.checkBoxTSACheck.Name = "checkBoxTSACheck";
             this.checkBoxTSACheck.Size = new System.Drawing.Size(426, 36);
@@ -559,7 +587,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1403, 318);
+            this.button1.Location = new System.Drawing.Point(20, 30);
             this.button1.Margin = new System.Windows.Forms.Padding(5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(249, 50);
@@ -581,6 +609,40 @@
             this.textBoxSubj.Size = new System.Drawing.Size(248, 38);
             this.textBoxSubj.TabIndex = 151;
             // 
+            // groupBoxExGLeadOff
+            // 
+            this.groupBoxExGLeadOff.Controls.Add(this.labelExGLeadOffDetection);
+            this.groupBoxExGLeadOff.Controls.Add(this.labelLeadOffStatus1);
+            this.groupBoxExGLeadOff.Controls.Add(this.labelLeadOffStatus2);
+            this.groupBoxExGLeadOff.Controls.Add(this.labelLeadOffStatus3);
+            this.groupBoxExGLeadOff.Controls.Add(this.labelLeadOffStatus4);
+            this.groupBoxExGLeadOff.Controls.Add(this.labelLeadOffStatus5);
+            this.groupBoxExGLeadOff.Controls.Add(this.textBoxLeadOffStatus1);
+            this.groupBoxExGLeadOff.Controls.Add(this.textBoxLeadOffStatus2);
+            this.groupBoxExGLeadOff.Controls.Add(this.textBoxLeadOffStatus3);
+            this.groupBoxExGLeadOff.Controls.Add(this.textBoxLeadOffStatus4);
+            this.groupBoxExGLeadOff.Controls.Add(this.textBoxLeadOffStatus5);
+            this.groupBoxExGLeadOff.Location = new System.Drawing.Point(630, 229);
+            this.groupBoxExGLeadOff.Margin = new System.Windows.Forms.Padding(5);
+            this.groupBoxExGLeadOff.Name = "groupBoxExGLeadOff";
+            this.groupBoxExGLeadOff.Padding = new System.Windows.Forms.Padding(5);
+            this.groupBoxExGLeadOff.Size = new System.Drawing.Size(564, 164);
+            this.groupBoxExGLeadOff.TabIndex = 158;
+            this.groupBoxExGLeadOff.TabStop = false;
+            this.groupBoxExGLeadOff.Text = "EXG Lead-Off Detection";
+            // 
+            // groupBoxPPG
+            // 
+            this.groupBoxPPG.Controls.Add(this.button1);
+            this.groupBoxPPG.Location = new System.Drawing.Point(1226, 229);
+            this.groupBoxPPG.Margin = new System.Windows.Forms.Padding(5);
+            this.groupBoxPPG.Name = "groupBoxPPG";
+            this.groupBoxPPG.Padding = new System.Windows.Forms.Padding(5);
+            this.groupBoxPPG.Size = new System.Drawing.Size(289, 100);
+            this.groupBoxPPG.TabIndex = 159;
+            this.groupBoxPPG.TabStop = false;
+            this.groupBoxPPG.Text = "PPG";
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -593,7 +655,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.labelComPort);
+            this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboBoxComPorts);
             this.groupBox1.Controls.Add(this.buttonConnect);
             this.groupBox1.Controls.Add(this.buttonReload);
@@ -731,7 +793,7 @@
             // button_ConfigureSignals
             // 
             this.button_ConfigureSignals.Enabled = false;
-            this.button_ConfigureSignals.Location = new System.Drawing.Point(893, 437);
+            this.button_ConfigureSignals.Location = new System.Drawing.Point(893, 416);
             this.button_ConfigureSignals.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.button_ConfigureSignals.Name = "button_ConfigureSignals";
             this.button_ConfigureSignals.Size = new System.Drawing.Size(251, 48);
@@ -740,38 +802,38 @@
             this.button_ConfigureSignals.UseVisualStyleBackColor = true;
             this.button_ConfigureSignals.Click += new System.EventHandler(this.button_ConfigureSignals_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(348, 103);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(0, 32);
+            this.label4.TabIndex = 126;
+            // 
             // Control
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(2266, 1593);
+            this.ClientSize = new System.Drawing.Size(2172, 973);
             this.Controls.Add(this.button_ConfigureSignals);
             this.Controls.Add(this.groupBoxManualMarker);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.groupBoxExGLeadOff);
+            this.Controls.Add(this.groupBoxPPG);
             this.Controls.Add(this.checkBoxTSACheck);
             this.Controls.Add(this.buttonReadDirectory);
-            this.Controls.Add(this.labelExGLeadOffDetection);
-            this.Controls.Add(this.labelLeadOffStatus4);
-            this.Controls.Add(this.labelLeadOffStatus3);
-            this.Controls.Add(this.labelLeadOffStatus5);
-            this.Controls.Add(this.labelLeadOffStatus1);
-            this.Controls.Add(this.labelLeadOffStatus2);
-            this.Controls.Add(this.textBoxLeadOffStatus5);
-            this.Controls.Add(this.textBoxLeadOffStatus4);
-            this.Controls.Add(this.textBoxLeadOffStatus2);
-            this.Controls.Add(this.textBoxLeadOffStatus3);
-            this.Controls.Add(this.textBoxLeadOffStatus1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonRemoveGraph);
             this.Controls.Add(this.buttonAddGraph);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.ZedGraphControl1);
+            this.Controls.Add(this.groupBoxGraph1);
+            this.Controls.Add(this.groupBoxGraph2);
+            this.Controls.Add(this.groupBoxGraph3);
             this.Controls.Add(this.statusStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
@@ -779,10 +841,14 @@
             this.ShowInTaskbar = false;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.buttonDisconnect_Click);
             this.Load += new System.EventHandler(this.ControlForm_Load);
+            this.groupBoxGraph1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.groupBoxExGLeadOff.ResumeLayout(false);
+            this.groupBoxExGLeadOff.PerformLayout();
+            this.groupBoxPPG.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -803,8 +869,10 @@
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.TextBox textBoxShimmerState;
         private System.Windows.Forms.Label labelState;
+        private System.Windows.Forms.GroupBox groupBoxGraph1;
         private ZedGraph.ZedGraphControl ZedGraphControl1;
-        private System.Windows.Forms.Label labelComPort;
+        private System.Windows.Forms.GroupBox groupBoxGraph2;
+        private System.Windows.Forms.GroupBox groupBoxGraph3;
         private System.Windows.Forms.ComboBox comboBoxComPorts;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton toolStripItemFile;
@@ -861,6 +929,9 @@
         private System.Windows.Forms.ToolStripMenuItem configureSignalDisplayToolStripMenuItem;
         private System.Windows.Forms.Button button_ConfigureSignals;
         private System.Windows.Forms.ToolStripMenuItem configureUDPMarkersToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBoxExGLeadOff;
+        private System.Windows.Forms.GroupBox groupBoxPPG;
+        private System.Windows.Forms.Label label4;
     }
 }
 

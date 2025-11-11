@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ShimmerAPI
 {
@@ -18,19 +19,33 @@ namespace ShimmerAPI
         private readonly DateTime sessionStartTime;
         private readonly string subjectName;
         private readonly string softwareVersion;
+        private readonly string deviceInfo;
+        private readonly string deviceSerial;
+        private readonly Stopwatch stopwatch;
+        private readonly long initialQpcTicks;
 
-        public Logging(String fileName, String delimeter, string subjectName = "", string softwareVersion = "")
+        public Logging(String fileName, String delimeter, string subjectName = "", string softwareVersion = "", string deviceInfo = "", string deviceSerial = "")
         {
             Delimeter = delimeter;
             FileName = fileName;
             this.subjectName = subjectName;
             this.softwareVersion = softwareVersion;
+            this.deviceInfo = deviceInfo;
+            this.deviceSerial = deviceSerial;
             this.sessionStartTime = DateTime.Now;
+
+            // Initialize high-resolution timer
+            stopwatch = new Stopwatch();
+            initialQpcTicks = Stopwatch.GetTimestamp();
 
             try
             {
                 PCsvFile = new StreamWriter(FileName, false);
                 WriteFileHeader();
+
+                // Start the stopwatch after header is written
+                stopwatch.Start();
+
                 ErrorLogger.LogInfo($"CSV file opened: {fileName}", "Logging.Constructor");
             }
             catch (Exception ex)
@@ -58,11 +73,19 @@ namespace ShimmerAPI
                     PCsvFile.WriteLine($"# Session Start Date: {sessionStartTime:yyyy-MM-dd}");
                     PCsvFile.WriteLine($"# Session Start Time: {sessionStartTime:HH:mm:ss.fff}");
                     PCsvFile.WriteLine($"# Subject: {(string.IsNullOrEmpty(subjectName) ? "N/A" : subjectName)}");
-                    PCsvFile.WriteLine($"# File: {Path.GetFileName(FileName)}");
+                    PCsvFile.WriteLine($"# Device: {(string.IsNullOrEmpty(deviceInfo) ? "N/A" : deviceInfo)}");
+                    PCsvFile.WriteLine($"# Device Serial Number: {(string.IsNullOrEmpty(deviceSerial) ? "N/A" : deviceSerial)}");
+                    PCsvFile.WriteLine("#");
+                    PCsvFile.WriteLine($"# Timer: System.Diagnostics.Stopwatch (High-Resolution Performance Counter)");
+                    PCsvFile.WriteLine($"# Timer Frequency: {Stopwatch.Frequency} Hz");
+                    PCsvFile.WriteLine($"# Timer Resolution: {1000.0 / Stopwatch.Frequency:F6} ms");
+                    PCsvFile.WriteLine($"# Initial QPC Ticks: {initialQpcTicks}");
+                    PCsvFile.WriteLine($"# Initial QPC Time (ms): {(double)initialQpcTicks * 1000.0 / Stopwatch.Frequency:F6}");
+                    PCsvFile.WriteLine($"# Initial QPC Time (seconds): {(double)initialQpcTicks / Stopwatch.Frequency:F9}");
                     PCsvFile.WriteLine("#");
                     PCsvFile.WriteLine("# Data Format:");
-                    PCsvFile.WriteLine("#   SystemTime: PC clock time when data received (HH:MM:SS.ms)");
-                    PCsvFile.WriteLine("#   ElapsedTime: Milliseconds since recording started");
+                    PCsvFile.WriteLine("#   QPC_Ticks: Raw QueryPerformanceCounter ticks");
+                    PCsvFile.WriteLine("#   TIMESTAMP: Device timestamp (RAW = counter, CAL = milliseconds)");
                     PCsvFile.WriteLine("#   Markers: UDP markers received (MRKxxx) or blank");
                     PCsvFile.WriteLine("#");
 
@@ -115,9 +138,9 @@ namespace ShimmerAPI
 
                     Double[] data = obj.GetData().ToArray();
 
-                    PCsvFile.Write(System.DateTime.Now.Hour + ":" + System.DateTime.Now.Minute + ":" + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond + Delimeter);
-
-                    PCsvFile.Write(obj.elapsedTimer.ToString() + Delimeter);
+                    // Write raw QPC ticks
+                    long currentQpcTicks = Stopwatch.GetTimestamp();
+                    PCsvFile.Write(currentQpcTicks.ToString() + Delimeter);
 
                     for (int i = 0; i < data.Length; i++)
                     {
@@ -172,8 +195,8 @@ namespace ShimmerAPI
                 //}
                 PCsvFile.WriteLine();
 
-                PCsvFile.Write("SystemTime" + Delimeter);
-                PCsvFile.Write("ElapsedTime" + Delimeter);
+                // Column names row
+                PCsvFile.Write("QPC_Ticks" + Delimeter);
 
                 for (int i = 0; i < data.Count; i++)
                 {
@@ -182,8 +205,8 @@ namespace ShimmerAPI
                 PCsvFile.Write("Markers" + Delimeter);
                 PCsvFile.WriteLine();
 
-                PCsvFile.Write("SystemTime" + Delimeter);
-                PCsvFile.Write("ElapsedTime" + Delimeter);
+                // Format row
+                PCsvFile.Write("RAW" + Delimeter);
                 for (int i = 0; i < data.Count; i++)
                 {
                     PCsvFile.Write(formats[i] + Delimeter);
@@ -192,8 +215,8 @@ namespace ShimmerAPI
 
                 PCsvFile.WriteLine();
 
-                PCsvFile.Write("DateTime" + Delimeter);
-                PCsvFile.Write("ms" + Delimeter);
+                // Units row
+                PCsvFile.Write("ticks" + Delimeter);
                 for (int i = 0; i < data.Count; i++)
                 {
                     PCsvFile.Write(units[i] + Delimeter);
@@ -230,6 +253,12 @@ namespace ShimmerAPI
                 {
                     try
                     {
+                        // Stop the stopwatch
+                        if (stopwatch != null && stopwatch.IsRunning)
+                        {
+                            stopwatch.Stop();
+                        }
+
                         if (PCsvFile != null)
                         {
                             PCsvFile.Flush();
