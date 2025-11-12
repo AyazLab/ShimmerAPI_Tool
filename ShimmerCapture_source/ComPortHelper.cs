@@ -131,37 +131,38 @@ namespace ShimmerAPI
             try
             {
                 // Query for all devices with COM ports in their caption
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(
-                    "SELECT * FROM Win32_PnPEntity WHERE Caption LIKE '%(COM%'"
-                );
-
-                foreach (ManagementObject obj in searcher.Get())
+                // IMPORTANT: Use 'using' statement to properly dispose ManagementObjectSearcher
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(
+                    "SELECT * FROM Win32_PnPEntity WHERE Caption LIKE '%(COM%'"))
                 {
-                    try
+                    foreach (ManagementObject obj in searcher.Get())
                     {
-                        string caption = obj["Caption"]?.ToString();
-                        if (string.IsNullOrEmpty(caption))
-                            continue;
-
-                        // Extract COM port number from caption like "Device Name (COM5)"
-                        int startIdx = caption.LastIndexOf("(COM");
-                        int endIdx = caption.LastIndexOf(")");
-
-                        if (startIdx >= 0 && endIdx > startIdx)
+                        try
                         {
-                            string portName = caption.Substring(startIdx + 1, endIdx - startIdx - 1); // "COM5"
-                            string description = caption.Substring(0, startIdx).Trim(); // Device name part
+                            string caption = obj["Caption"]?.ToString();
+                            if (string.IsNullOrEmpty(caption))
+                                continue;
 
-                            descriptions[portName] = description;
+                            // Extract COM port number from caption like "Device Name (COM5)"
+                            int startIdx = caption.LastIndexOf("(COM");
+                            int endIdx = caption.LastIndexOf(")");
+
+                            if (startIdx >= 0 && endIdx > startIdx)
+                            {
+                                string portName = caption.Substring(startIdx + 1, endIdx - startIdx - 1); // "COM5"
+                                string description = caption.Substring(0, startIdx).Trim(); // Device name part
+
+                                descriptions[portName] = description;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogWarning($"Error parsing WMI object: {ex.Message}", "ComPortHelper.GetComPortDescriptionsFromWMI");
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.LogWarning($"Error parsing WMI object: {ex.Message}", "ComPortHelper.GetComPortDescriptionsFromWMI");
-                    }
-                }
 
-                ErrorLogger.LogInfo($"WMI found {descriptions.Count} COM port descriptions", "ComPortHelper.GetComPortDescriptionsFromWMI");
+                    ErrorLogger.LogInfo($"WMI found {descriptions.Count} COM port descriptions", "ComPortHelper.GetComPortDescriptionsFromWMI");
+                }
             }
             catch (Exception ex)
             {
@@ -239,68 +240,70 @@ namespace ShimmerAPI
             try
             {
                 // Query Win32_SerialPort for Bluetooth COM ports
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(
-                    "SELECT * FROM Win32_SerialPort WHERE Description LIKE '%Bluetooth%' OR PNPDeviceID LIKE '%BTHENUM%'"
-                );
-
-                foreach (ManagementObject obj in searcher.Get())
+                // IMPORTANT: Use 'using' statement to properly dispose ManagementObjectSearcher
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(
+                    "SELECT * FROM Win32_SerialPort WHERE Description LIKE '%Bluetooth%' OR PNPDeviceID LIKE '%BTHENUM%'"))
                 {
-                    try
+                    foreach (ManagementObject obj in searcher.Get())
                     {
-                        string deviceID = obj["DeviceID"]?.ToString(); // e.g., "COM5"
-                        string pnpID = obj["PNPDeviceID"]?.ToString();
-
-                        if (string.IsNullOrEmpty(deviceID))
-                            continue;
-
-                        // Try to extract Bluetooth address from PNP ID
-                        // PNP ID format: BTHENUM\{00001101-0000-1000-8000-00805F9B34FB}_VID&...MAC_ADDRESS...
-                        if (!string.IsNullOrEmpty(pnpID))
+                        try
                         {
-                            // Look for MAC address patterns in the PNP ID
-                            foreach (var shimmer in shimmerDevices)
-                            {
-                                string btAddress = shimmer.Key; // Already normalized
+                            string deviceID = obj["DeviceID"]?.ToString(); // e.g., "COM5"
+                            string pnpID = obj["PNPDeviceID"]?.ToString();
 
-                                if (pnpID.ToUpper().Contains(btAddress.ToUpper()))
+                            if (string.IsNullOrEmpty(deviceID))
+                                continue;
+
+                            // Try to extract Bluetooth address from PNP ID
+                            // PNP ID format: BTHENUM\{00001101-0000-1000-8000-00805F9B34FB}_VID&...MAC_ADDRESS...
+                            if (!string.IsNullOrEmpty(pnpID))
+                            {
+                                // Look for MAC address patterns in the PNP ID
+                                foreach (var shimmer in shimmerDevices)
                                 {
-                                    portMapping[deviceID] = shimmer.Value;
-                                    ErrorLogger.LogInfo($"Mapped {deviceID} to {shimmer.Value}", "ComPortHelper.MapBluetoothToComPorts");
-                                    break;
+                                    string btAddress = shimmer.Key; // Already normalized
+
+                                    if (pnpID.ToUpper().Contains(btAddress.ToUpper()))
+                                    {
+                                        portMapping[deviceID] = shimmer.Value;
+                                        ErrorLogger.LogInfo($"Mapped {deviceID} to {shimmer.Value}", "ComPortHelper.MapBluetoothToComPorts");
+                                        break;
+                                    }
                                 }
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogWarning($"Error mapping COM port: {ex.Message}", "ComPortHelper.MapBluetoothToComPorts");
+                        }
                     }
-                    catch (Exception ex)
+
+                    // If mapping failed but we have exactly one Shimmer and one Bluetooth COM port, make educated guess
+                    if (portMapping.Count == 0 && shimmerDevices.Count == 1)
                     {
-                        ErrorLogger.LogWarning($"Error mapping COM port: {ex.Message}", "ComPortHelper.MapBluetoothToComPorts");
+                        int bluetoothPortCount = 0;
+                        string lastBluetoothPort = null;
+
+                        // IMPORTANT: Use 'using' statement for nested searcher too
+                        using (ManagementObjectSearcher countSearcher = new ManagementObjectSearcher(
+                            "SELECT DeviceID FROM Win32_SerialPort WHERE Description LIKE '%Bluetooth%'"))
+                        {
+                            foreach (ManagementObject obj in countSearcher.Get())
+                            {
+                                lastBluetoothPort = obj["DeviceID"]?.ToString();
+                                bluetoothPortCount++;
+                            }
+                        }
+
+                        if (bluetoothPortCount == 1 && !string.IsNullOrEmpty(lastBluetoothPort))
+                        {
+                            portMapping[lastBluetoothPort] = shimmerDevices.Values.First();
+                            ErrorLogger.LogInfo($"Made educated guess: {lastBluetoothPort} -> {shimmerDevices.Values.First()}", "ComPortHelper.MapBluetoothToComPorts");
+                        }
                     }
+
+                    ErrorLogger.LogInfo($"Successfully mapped {portMapping.Count} COM ports to Shimmer devices", "ComPortHelper.MapBluetoothToComPorts");
                 }
-
-                // If mapping failed but we have exactly one Shimmer and one Bluetooth COM port, make educated guess
-                if (portMapping.Count == 0 && shimmerDevices.Count == 1)
-                {
-                    int bluetoothPortCount = 0;
-                    string lastBluetoothPort = null;
-
-                    ManagementObjectSearcher countSearcher = new ManagementObjectSearcher(
-                        "SELECT DeviceID FROM Win32_SerialPort WHERE Description LIKE '%Bluetooth%'"
-                    );
-
-                    foreach (ManagementObject obj in countSearcher.Get())
-                    {
-                        lastBluetoothPort = obj["DeviceID"]?.ToString();
-                        bluetoothPortCount++;
-                    }
-
-                    if (bluetoothPortCount == 1 && !string.IsNullOrEmpty(lastBluetoothPort))
-                    {
-                        portMapping[lastBluetoothPort] = shimmerDevices.Values.First();
-                        ErrorLogger.LogInfo($"Made educated guess: {lastBluetoothPort} -> {shimmerDevices.Values.First()}", "ComPortHelper.MapBluetoothToComPorts");
-                    }
-                }
-
-                ErrorLogger.LogInfo($"Successfully mapped {portMapping.Count} COM ports to Shimmer devices", "ComPortHelper.MapBluetoothToComPorts");
             }
             catch (Exception ex)
             {
@@ -330,40 +333,41 @@ namespace ShimmerAPI
                 }
 
                 // Query Win32_SerialPort for Bluetooth COM ports
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(
-                    "SELECT * FROM Win32_SerialPort WHERE Description LIKE '%Bluetooth%' OR PNPDeviceID LIKE '%BTHENUM%'"
-                );
-
-                foreach (ManagementObject obj in searcher.Get())
+                // IMPORTANT: Use 'using' statement to properly dispose ManagementObjectSearcher
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(
+                    "SELECT * FROM Win32_SerialPort WHERE Description LIKE '%Bluetooth%' OR PNPDeviceID LIKE '%BTHENUM%'"))
                 {
-                    try
+                    foreach (ManagementObject obj in searcher.Get())
                     {
-                        string deviceID = obj["DeviceID"]?.ToString(); // e.g., "COM5"
-                        string pnpID = obj["PNPDeviceID"]?.ToString();
-
-                        if (string.IsNullOrEmpty(deviceID) || string.IsNullOrEmpty(pnpID))
-                            continue;
-
-                        // Look for MAC address patterns in the PNP ID
-                        foreach (var shimmer in shimmerDevices)
+                        try
                         {
-                            string btAddress = shimmer.Key; // Already normalized
+                            string deviceID = obj["DeviceID"]?.ToString(); // e.g., "COM5"
+                            string pnpID = obj["PNPDeviceID"]?.ToString();
 
-                            if (pnpID.ToUpper().Contains(btAddress))
+                            if (string.IsNullOrEmpty(deviceID) || string.IsNullOrEmpty(pnpID))
+                                continue;
+
+                            // Look for MAC address patterns in the PNP ID
+                            foreach (var shimmer in shimmerDevices)
                             {
-                                addressToPort[btAddress] = deviceID;
-                                ErrorLogger.LogInfo($"Address mapping: {btAddress} -> {deviceID}", "ComPortHelper.GetBluetoothAddressToComPortMapping");
-                                break;
+                                string btAddress = shimmer.Key; // Already normalized
+
+                                if (pnpID.ToUpper().Contains(btAddress))
+                                {
+                                    addressToPort[btAddress] = deviceID;
+                                    ErrorLogger.LogInfo($"Address mapping: {btAddress} -> {deviceID}", "ComPortHelper.GetBluetoothAddressToComPortMapping");
+                                    break;
+                                }
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogWarning($"Error creating address mapping: {ex.Message}", "ComPortHelper.GetBluetoothAddressToComPortMapping");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.LogWarning($"Error creating address mapping: {ex.Message}", "ComPortHelper.GetBluetoothAddressToComPortMapping");
-                    }
-                }
 
-                ErrorLogger.LogInfo($"Created {addressToPort.Count} Bluetooth address to COM port mappings", "ComPortHelper.GetBluetoothAddressToComPortMapping");
+                    ErrorLogger.LogInfo($"Created {addressToPort.Count} Bluetooth address to COM port mappings", "ComPortHelper.GetBluetoothAddressToComPortMapping");
+                }
             }
             catch (Exception ex)
             {
