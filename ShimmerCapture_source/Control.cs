@@ -1315,6 +1315,25 @@ namespace ShimmerAPI
 
             if (!string.IsNullOrEmpty(ComPort) && !ComPort.Contains("No Valid"))
             {
+                // CRITICAL FIX: Dispose old ShimmerDevice before creating new one to prevent resource leaks
+                if (ShimmerDevice != null)
+                {
+                    try
+                    {
+                        // Unsubscribe event handler to prevent memory leak
+                        ShimmerDevice.UICallback -= this.HandleEvent;
+
+                        // Dispose the old device (releases COM port, threads, etc.)
+                        ShimmerDevice.Dispose();
+
+                        ErrorLogger.LogInfo("Disposed old ShimmerDevice before creating new connection", "Control.Connect");
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.LogError("Error disposing old ShimmerDevice", ex, "Control.Connect");
+                    }
+                }
+
                 ShimmerDevice = new ShimmerLogAndStreamSystemSerialPort(deviceName, ComPort);
                 ShimmerDevice.UICallback += this.HandleEvent;
 
@@ -1355,22 +1374,47 @@ namespace ShimmerAPI
             labelPRR.Visible = false;
             if (ShimmerDevice != null)
             {
-                if (ShimmerDevice.GetState() == (int)ShimmerBluetooth.SHIMMER_STATE_STREAMING)
+                try
                 {
-                    if (ShimmerDevice.GetFirmwareIdentifier() == 3)
+                    if (ShimmerDevice.GetState() == (int)ShimmerBluetooth.SHIMMER_STATE_STREAMING)
                     {
+                        if (ShimmerDevice.GetFirmwareIdentifier() == 3)
+                        {
 
+                        }
+                        else
+                        {
+                            ShimmerDevice.StopStreaming();
+                            if (udpListener != null)
+                            {
+                                udpListener.StopListener();
+                            }
+                        }
                     }
-                    else
-                    {
-                        ShimmerDevice.StopStreaming();
-                        udpListener.StopListener();
-                    }
+                    ShimmerDevice.Disconnect();
+
+                    // CRITICAL FIX: Unsubscribe event handler and dispose device
+                    ShimmerDevice.UICallback -= this.HandleEvent;
+                    ShimmerDevice.Dispose();
+                    ShimmerDevice = null;
+
+                    ErrorLogger.LogInfo("Disposed ShimmerDevice on disconnect", "Control.Disconnect");
                 }
-                ShimmerDevice.Disconnect();
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error during ShimmerDevice disconnect/disposal", ex, "Control.Disconnect");
+                }
+
                 if (Orientation3DForm != null)
                 {
-                    Orientation3DForm.Close();
+                    try
+                    {
+                        Orientation3DForm.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.LogError("Error closing 3D Orientation form", ex, "Control.Disconnect");
+                    }
                 }
             }
             ShimmerIdSetup.Clear();
@@ -1530,22 +1574,9 @@ namespace ShimmerAPI
                     udpListener.SetMarkerLogger(markerLogger);
                 }
 
-                udpListener.NewMessageReceived += delegate (object o, MyMessageArgs msgData)
-                {
-                    string timestamp =  DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + DateTime.Now.Second.ToString("00") + ".csv";
-
-                    string s = o.ToString() + " " + msgData.data.ToString();
-                    if (WriteToFile != null)
-                    {
-                        WriteToFile.WriteMarker(msgData.data[0]);
-                        statusStrip1.Text = ("Marker received: "+timestamp+" : "+s);
-                    }
-                    else
-                    {
-                        statusStrip1.Text = ("Marker log file not created!!");
-                    }
-
-                };
+                // CRITICAL FIX: Removed anonymous delegate (can't be unsubscribed, causes memory leak)
+                // The UDP_NewMessageReceived named method is subscribed in RestartUDPListener() instead
+                // The marker logger handles writing markers to file automatically
 
                 udpListener.StartListener(udpMsgLen);
             }
@@ -1645,8 +1676,9 @@ namespace ShimmerAPI
                     HPF_Exg1Ch1.resetBuffers();
                     HPF_Exg1Ch2.resetBuffers();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogWarning($"Error resetting HPF_Exg1 buffers: {ex.Message}", "Control.buttonStop_Click1");
                 }
             }
             if (EnableNQF)
@@ -1656,8 +1688,9 @@ namespace ShimmerAPI
                     NQF_Exg1Ch1.resetBuffers();
                     NQF_Exg1Ch2.resetBuffers();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogWarning($"Error resetting NQF_Exg1 buffers: {ex.Message}", "Control.buttonStop_Click1");
                 }
             }
             if (EnableNQF)
@@ -1667,8 +1700,9 @@ namespace ShimmerAPI
                     NQF_Exg2Ch1.resetBuffers();
                     NQF_Exg2Ch2.resetBuffers();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogWarning($"Error resetting NQF_Exg2 buffers: {ex.Message}", "Control.buttonStop_Click1");
                 }
             }
             if (EnableHPF_0_05HZ || EnableHPF_0_5HZ || EnableHPF_5HZ)
@@ -1678,8 +1712,9 @@ namespace ShimmerAPI
                     HPF_Exg2Ch1.resetBuffers();
                     HPF_Exg2Ch2.resetBuffers();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogWarning($"Error resetting HPF_Exg2 buffers: {ex.Message}", "Control.buttonStop_Click1");
                 }
             }
             if (EnableBSF_49_51HZ || EnableBSF_59_61HZ)
@@ -1689,8 +1724,9 @@ namespace ShimmerAPI
                     BSF_Exg1Ch1.resetBuffers();
                     BSF_Exg1Ch2.resetBuffers();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogWarning($"Error resetting BSF_Exg1 buffers: {ex.Message}", "Control.buttonStop_Click1");
                 }
             }
             if (EnableBSF_49_51HZ || EnableBSF_59_61HZ)
@@ -1700,8 +1736,9 @@ namespace ShimmerAPI
                     BSF_Exg2Ch1.resetBuffers();
                     BSF_Exg2Ch2.resetBuffers();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ErrorLogger.LogWarning($"Error resetting BSF_Exg2 buffers: {ex.Message}", "Control.buttonStop_Click1");
                 }
             }
             // clear all signal selections
@@ -3322,6 +3359,17 @@ namespace ShimmerAPI
                 if (udpListener != null)
                 {
                     System.Diagnostics.Debug.WriteLine($"Stopping UDP listener on port {udpPortNo}");
+
+                    // CRITICAL FIX: Unsubscribe event handler before disposal to prevent memory leak
+                    try
+                    {
+                        udpListener.NewMessageReceived -= UDP_NewMessageReceived;
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.LogWarning($"Error unsubscribing UDP event handler: {ex.Message}", "Control.RestartUDPListener");
+                    }
+
                     udpListener.StopListener();
                     udpListener.Dispose();
                     udpListener = null;

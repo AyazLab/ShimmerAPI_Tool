@@ -358,14 +358,15 @@ namespace ShimmerAPI
                     MessageBox.Show(
                         $"Successfully paired with {device.DeviceName}!\n\n" +
                         "Windows will now assign a COM port to this device.\n" +
-                        "Please wait a moment, then click Refresh to see the assigned COM port.",
+                        "Click Refresh to see the assigned COM port.",
                         "Pairing Successful",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
 
-                    // Refresh the device list after a short delay
-                    System.Threading.Thread.Sleep(2000);
-                    StartDiscovery();
+                    // IMPROVEMENT: Instead of blocking with Thread.Sleep, just enable the Refresh button
+                    // User can manually refresh when ready
+                    buttonRefresh.Enabled = true;
+                    buttonPair.Enabled = false;
                 }
                 else
                 {
@@ -441,10 +442,49 @@ namespace ShimmerAPI
         /// </summary>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            // Cancel discovery if in progress
+            // CRITICAL FIX: Cancel discovery and wait for worker to complete to prevent race conditions
             if (discoveryWorker != null && discoveryWorker.IsBusy)
             {
-                discoveryWorker.CancelAsync();
+                try
+                {
+                    discoveryWorker.CancelAsync();
+
+                    // Wait for worker to complete (with timeout to prevent hang)
+                    int timeout = 0;
+                    while (discoveryWorker.IsBusy && timeout < 3000)
+                    {
+                        System.Windows.Forms.Application.DoEvents();
+                        System.Threading.Thread.Sleep(100);
+                        timeout += 100;
+                    }
+
+                    if (discoveryWorker.IsBusy)
+                    {
+                        ErrorLogger.LogWarning("BackgroundWorker did not stop within timeout", "BluetoothPairingDialog.OnFormClosing");
+                    }
+                    else
+                    {
+                        ErrorLogger.LogInfo("BackgroundWorker stopped successfully before form close", "BluetoothPairingDialog.OnFormClosing");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error waiting for BackgroundWorker to complete", ex, "BluetoothPairingDialog.OnFormClosing");
+                }
+            }
+
+            // Dispose BackgroundWorker to prevent memory leak
+            if (discoveryWorker != null)
+            {
+                try
+                {
+                    discoveryWorker.Dispose();
+                    discoveryWorker = null;
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error disposing BackgroundWorker", ex, "BluetoothPairingDialog.OnFormClosing");
+                }
             }
 
             base.OnFormClosing(e);

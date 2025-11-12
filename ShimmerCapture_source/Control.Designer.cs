@@ -1,4 +1,7 @@
-﻿namespace ShimmerAPI
+﻿using System;
+using ShimmerAPI;
+
+namespace ShimmerAPI
 {
     partial class Control
     {
@@ -13,9 +16,95 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                // CRITICAL FIX: Dispose all resources to prevent memory leaks
+                try
+                {
+                    // Dispose ShimmerDevice and unsubscribe events
+                    if (ShimmerDevice != null)
+                    {
+                        try
+                        {
+                            ShimmerDevice.UICallback -= this.HandleEvent;
+                            ShimmerDevice.Dispose();
+                            ShimmerDevice = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error disposing ShimmerDevice in form Dispose", ex, "Control.Dispose");
+                        }
+                    }
+
+                    // Dispose UDPListener
+                    if (udpListener != null)
+                    {
+                        try
+                        {
+                            udpListener.StopListener();
+                            udpListener = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error disposing UDPListener in form Dispose", ex, "Control.Dispose");
+                        }
+                    }
+
+                    // Dispose WriteToFile (Logging)
+                    if (WriteToFile != null)
+                    {
+                        try
+                        {
+                            WriteToFile.CloseFile();
+                            WriteToFile = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error disposing WriteToFile in form Dispose", ex, "Control.Dispose");
+                        }
+                    }
+
+                    // Dispose markerLogger
+                    if (markerLogger != null)
+                    {
+                        try
+                        {
+                            markerLogger.Dispose();
+                            markerLogger = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error disposing markerLogger in form Dispose", ex, "Control.Dispose");
+                        }
+                    }
+
+                    // Dispose dead SerialPort field (cleanup)
+                    if (SerialPort != null)
+                    {
+                        try
+                        {
+                            if (SerialPort.IsOpen)
+                            {
+                                SerialPort.Close();
+                            }
+                            SerialPort.Dispose();
+                            SerialPort = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.LogError("Error disposing SerialPort in form Dispose", ex, "Control.Dispose");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogError("Error during form disposal cleanup", ex, "Control.Dispose");
+                }
+
+                if (components != null)
+                {
+                    components.Dispose();
+                }
             }
             base.Dispose(disposing);
         }
